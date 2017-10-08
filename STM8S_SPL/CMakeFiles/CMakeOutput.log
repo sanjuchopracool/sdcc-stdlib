@@ -1,0 +1,55 @@
+The target system is: Generic -  - 
+The host system is: Darwin - 17.0.0 - x86_64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: /usr/local/bin/sdcc 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.asm"
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.ihx"
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.lk"
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.lst"
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.map"
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.mem"
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.rel"
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.rst"
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.sym"
+
+The C compiler identification is SDCC, found in "/Users/sanju/Downloads/STM8/STM8S_SPL/CMakeFiles/3.9.4/CompilerIdC/CMakeCCompilerId.asm"
+
+Determining if the C compiler works passed with the following output:
+Change Dir: /Users/sanju/Downloads/STM8/STM8S_SPL/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_b4035/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_b4035.dir/build.make CMakeFiles/cmTC_b4035.dir/build
+Building C object CMakeFiles/cmTC_b4035.dir/testCCompiler.c.rel
+/usr/local/bin/sdcc -D__SDCC__  -mstm8 -lstm8 --std-c11 --opt-code-size    -o CMakeFiles/cmTC_b4035.dir/testCCompiler.c.rel -c /Users/sanju/Downloads/STM8/STM8S_SPL/CMakeFiles/CMakeTmp/testCCompiler.c
+Linking C executable cmTC_b4035.ihx
+/usr/local/Cellar/cmake/3.9.4/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b4035.dir/link.txt --verbose=1
+/usr/local/bin/sdcc -mstm8 -lstm8 --std-c11 --opt-code-size  CMakeFiles/cmTC_b4035.dir/testCCompiler.c.rel --out-fmt-ihx -o  cmTC_b4035.ihx    
+
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: /Users/sanju/Downloads/STM8/STM8S_SPL/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_b93d4/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_b93d4.dir/build.make CMakeFiles/cmTC_b93d4.dir/build
+Building C object CMakeFiles/cmTC_b93d4.dir/CMakeCCompilerABI.c.rel
+/usr/local/bin/sdcc -D__SDCC__  -mstm8 -lstm8 --std-c11 --opt-code-size    -o CMakeFiles/cmTC_b93d4.dir/CMakeCCompilerABI.c.rel -c /usr/local/Cellar/cmake/3.9.4/share/cmake/Modules/CMakeCCompilerABI.c
+Linking C executable cmTC_b93d4.ihx
+/usr/local/Cellar/cmake/3.9.4/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b93d4.dir/link.txt --verbose=1
+/usr/local/bin/sdcc -mstm8 -lstm8 --std-c11 --opt-code-size  CMakeFiles/cmTC_b93d4.dir/CMakeCCompilerABI.c.rel --out-fmt-ihx -o  cmTC_b93d4.ihx    
+
+
