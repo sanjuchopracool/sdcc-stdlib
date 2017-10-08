@@ -30,50 +30,50 @@
 #include <stdarg.h>
 
 /* GPIO */
-#define PA_ODR *(unsigned char*)0x5000
-#define PA_IDR *(unsigned char*)0x5001
-#define PA_DDR *(unsigned char*)0x5002
-#define PA_CR1 *(unsigned char*)0x5003
-#define PA_CR2 *(unsigned char*)0x5004
+#define PA_ODR *(__IO uint8_t*)0x5000
+#define PA_IDR *(__IO uint8_t*)0x5001
+#define PA_DDR *(__IO uint8_t*)0x5002
+#define PA_CR1 *(__IO uint8_t*)0x5003
+#define PA_CR2 *(__IO uint8_t*)0x5004
 
-#define PB_ODR *(unsigned char*)0x5005
-#define PB_IDR *(unsigned char*)0x5006
-#define PB_DDR *(unsigned char*)0x5007
-#define PB_CR1 *(unsigned char*)0x5008
-#define PB_CR2 *(unsigned char*)0x5009
+#define PB_ODR *(__IO uint8_t*)0x5005
+#define PB_IDR *(__IO uint8_t*)0x5006
+#define PB_DDR *(__IO uint8_t*)0x5007
+#define PB_CR1 *(__IO uint8_t*)0x5008
+#define PB_CR2 *(__IO uint8_t*)0x5009
 
-#define PC_ODR *(unsigned char*)0x500A
-#define PC_IDR *(unsigned char*)0x500B
-#define PC_DDR *(unsigned char*)0x500C
-#define PC_CR1 *(unsigned char*)0x500D
-#define PC_CR2 *(unsigned char*)0x500E
+#define PC_ODR *(__IO uint8_t*)0x500A
+#define PC_IDR *(__IO uint8_t*)0x500B
+#define PC_DDR *(__IO uint8_t*)0x500C
+#define PC_CR1 *(__IO uint8_t*)0x500D
+#define PC_CR2 *(__IO uint8_t*)0x500E
 
-#define PD_ODR *(unsigned char*)0x500F
-#define PD_IDR *(unsigned char*)0x5010
-#define PD_DDR *(unsigned char*)0x5011
-#define PD_CR1 *(unsigned char*)0x5012
-#define PD_CR2 *(unsigned char*)0x5013
+#define PD_ODR *(__IO uint8_t*)0x500F
+#define PD_IDR *(__IO uint8_t*)0x5010
+#define PD_DDR *(__IO uint8_t*)0x5011
+#define PD_CR1 *(__IO uint8_t*)0x5012
+#define PD_CR2 *(__IO uint8_t*)0x5013
 
-#define PE_ODR *(unsigned char*)0x5014
-#define PE_IDR *(unsigned char*)0x5015
-#define PE_DDR *(unsigned char*)0x5016
-#define PE_CR1 *(unsigned char*)0x5017
-#define PE_CR2 *(unsigned char*)0x5018
+#define PE_ODR *(__IO uint8_t*)0x5014
+#define PE_IDR *(__IO uint8_t*)0x5015
+#define PE_DDR *(__IO uint8_t*)0x5016
+#define PE_CR1 *(__IO uint8_t*)0x5017
+#define PE_CR2 *(__IO uint8_t*)0x5018
 
-#define PF_ODR *(unsigned char*)0x5019
-#define PF_IDR *(unsigned char*)0x501A
-#define PF_DDR *(unsigned char*)0x501B
-#define PF_CR1 *(unsigned char*)0x501C
-#define PF_CR2 *(unsigned char*)0x501D
+#define PF_ODR *(__IO uint8_t*)0x5019
+#define PF_IDR *(__IO uint8_t*)0x501A
+#define PF_DDR *(__IO uint8_t*)0x501B
+#define PF_CR1 *(__IO uint8_t*)0x501C
+#define PF_CR2 *(__IO uint8_t*)0x501D
 
 ///////////////////////////////////////////////////////////////////////////////
 ////////////////////// CLOCK set AT 16MHz HSI /////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
 /* CLOCK */
-#define CLK_SWR 	*(unsigned char*)0x50C4
-#define CLK_SWCR	*(unsigned char*)0x50C5
-#define CLK_DIVR	*(unsigned char*)0x50C6
+#define CLK_SWR 	*(__IO uint8_t*)0x50C4
+#define CLK_SWCR	*(__IO uint8_t*)0x50C5
+#define CLK_DIVR	*(__IO uint8_t*)0x50C6
 
 void setUpClock()
 {
@@ -88,13 +88,13 @@ void setUpClock()
 ////////////////////// TIMER 4 ////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-#define TIM4_CR1 	*(unsigned char*)0x5340
-#define TIM4_IER 	*(unsigned char*)0x5343
-#define TIM4_SR 	*(unsigned char*)0x5344
-#define TIM4_EGR 	*(unsigned char*)0x5345
-#define TIM4_CNTR 	*(unsigned char*)0x5346
-#define TIM4_PSCR 	*(unsigned char*)0x5347
-#define TIM4_ARR 	*(unsigned char*)0x5348
+#define TIM4_CR1 	*(__IO uint8_t*)0x5340
+#define TIM4_IER 	*(__IO uint8_t*)0x5343
+#define TIM4_SR 	*(__IO uint8_t*)0x5344
+#define TIM4_EGR 	*(__IO uint8_t*)0x5345
+#define TIM4_CNTR 	*(__IO uint8_t*)0x5346
+#define TIM4_PSCR 	*(__IO uint8_t*)0x5347
+#define TIM4_ARR 	*(__IO uint8_t*)0x5348
 
 void setUpTimer4()
 {
@@ -131,12 +131,12 @@ void delay( unsigned long inMs )
 ///////////////////////////////////////////////////////////////////////////////
 ////////////////////// UART1 //////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-#define UART1_SR	*(unsigned char*)0x5230
-#define UART1_DR	*(unsigned char*)0x5231
-#define UART1_BRR1	*(unsigned char*)0x5232
-#define UART1_BRR2	*(unsigned char*)0x5233
-#define UART1_CR2	*(unsigned char*)0x5235
-#define UART1_CR3	*(unsigned char*)0x5236
+#define UART1_SR	*(__IO uint8_t*)0x5230
+#define UART1_DR	*(__IO uint8_t*)0x5231
+#define UART1_BRR1	*(__IO uint8_t*)0x5232
+#define UART1_BRR2	*(__IO uint8_t*)0x5233
+#define UART1_CR2	*(__IO uint8_t*)0x5235
+#define UART1_CR3	*(__IO uint8_t*)0x5236
 
 #define UART_CR2_TEN (1 << 3)
 #define UART_SR_TXE (1 << 7)
@@ -275,13 +275,51 @@ void printf(char* format,...)
 ////////////////////// ADC //////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
+#define ADC1_CSR    *(__IO uint8_t*)0x5400
+#define ADC1_CR1    *(__IO uint8_t*)0x5401
+#define ADC1_CR2    *(__IO uint8_t*)0x5402
+#define ADC1_CR3    *(__IO uint8_t*)0x5403
+#define ADC1_DRH    *(__IO uint8_t*)0x5404
+#define ADC1_DRL    *(__IO uint8_t*)0x5405
+#define ADC1_TDRH    *(__IO uint8_t*)0x5406
+#define ADC1_TDRL   *(__IO uint8_t*)0x5407
+#define ADC1_HTRH   *(__IO uint8_t*)0x5408
+#define ADC1_HTRL    *(__IO uint8_t*)0x5409
+#define ADC1_LTRH   *(__IO uint8_t*)0x540A
+#define ADC1_LTRL   *(__IO uint8_t*)0x540B
+#define ADC1_AWSRH   *(__IO uint8_t*)0x540C
+#define ADC1_AWSRL  *(__IO uint8_t*)0x540D
+#define ADC1_AWCRH  *(__IO uint8_t*)0x540E
+#define ADC1_AWCRL  *(__IO uint8_t*)0x540F
 
+
+#define ADC1_CR1_ADON    ((uint8_t)0x01) /*!< A/D Converter on/off mask */
+#define ADC1_FLAG_EOC    (uint8_t)0x80  /**< EOC falg */
+
+///////////////////////////////////////////////////////////////////////////////
+
+uint16_t getADCValue(uint8_t channel)
+{
+    uint16_t value;
+    // i ma using reset value for adc1
+    // so i can directly set channel value to CST
+    ADC1_CSR = channel;        // set channel
+    ADC1_CR1 |= ADC1_CR1_ADON; // start conversion
+
+    while(! (ADC1_CSR & ADC1_FLAG_EOC) );
+//    // MSB at High and LSB at LOW
+    value = (uint16_t)(ADC1_DRL | (uint16_t)ADC1_DRH << 2);
+    ADC1_CSR &= (~ADC1_FLAG_EOC);
+    return value;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 
 int main()
 {
-    uint16_t adcValue = 0;
+    uint16_t adcValue2 = 0;
+    uint16_t adcValue3 = 0;
+    uint16_t adcValue4 = 0;
     setUpClock();
     setUpSerial();
     // Configure pins
@@ -293,26 +331,18 @@ int main()
     enableInterrupts();
 
     // ADC related stuff
-    // Default value is fine input
+    // Default value is fine input pins
+    // Fmster/4, single conversion mode, enable ADC
+    ADC1_CR1 = 0x21;
 
-    ADC1_Init(ADC1_CONVERSIONMODE_SINGLE,
-              ADC1_CHANNEL_2,
-              ADC1_PRESSEL_FCPU_D4,
-              ADC1_EXTTRIG_GPIO,
-              DISABLE,
-              ADC1_ALIGN_RIGHT,
-              ADC1_SCHMITTTRIG_CHANNEL2,
-              DISABLE);
-
-    ADC1_Cmd(ENABLE);
+    // keep default alignment, no scan node, no trigger
     while( 1 )
     {
-        ADC1_StartConversion();
-        while(ADC1_GetFlagStatus(ADC1_FLAG_EOC) == FALSE);
-        adcValue = ADC1_GetConversionValue();
-        ADC1_ClearFlag(ADC1_FLAG_EOC);
+        adcValue2 = getADCValue(2);
+        adcValue3 = getADCValue(3);
+        adcValue4 = getADCValue(4);
         PB_ODR ^= 0x20;
-        printf("%d\n", adcValue);
+        printf("%d  %d  %d\n", adcValue2, adcValue3, adcValue4);
         delay( 100 );
     }
 }
