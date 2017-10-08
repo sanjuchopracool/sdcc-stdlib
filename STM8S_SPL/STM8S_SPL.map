@@ -7,12 +7,10 @@ Area                                    Addr        Size        Decimal Bytes (A
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     00000000  .__.ABS.                           stm8s_gpio
+     00000000  .__.ABS.                           
      00000000  l_CABS                          
      00000000  l_DABS                          
      00000000  l_DATA                          
-     00000000  l_INITIALIZED                   
-     00000000  l_INITIALIZER                   
      00000000  l__CODE                         
      00000000  s_CABS                          
      00000000  s_DABS                          
@@ -20,32 +18,36 @@ Area                                    Addr        Size        Decimal Bytes (A
      00000001  l_SSEG                          
      00000001  s_DATA                          
      00000001  s_INITIALIZED                   
-     00000001  s_SSEG                          
      00000003  l_GSFINAL                       
+     00000008  l_INITIALIZED                   
+     00000008  l_INITIALIZER                   
+     00000009  s_SSEG                          
      0000001A  l_GSINIT                        
      00000083  l_HOME                          
-     0000011D  l_CODE                          
+     0000103F  l_CODE                          
      00008000  s_HOME                          
      00008083  s_GSINIT                        
      0000809D  s_GSFINAL                       
      000080A0  s_CODE                          
-     000081BD  s_INITIALIZER                   
+     000090DF  s_INITIALIZER                   
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 2.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-SSEG                                00000001    00000001 =           1. bytes (REL,CON)
+INITIALIZED                         00000001    00000008 =           8. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
+     00000001  _millis                            blinky
+
 ASxxxx Linker V03.00 + NoICE + sdld,  page 3.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-HOME                                00008000    00000083 =         131. bytes (REL,CON)
+SSEG                                00000009    00000001 =           1. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -54,7 +56,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-GSINIT                              00008083    0000001A =          26. bytes (REL,CON)
+HOME                                00008000    00000083 =         131. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -63,7 +65,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-GSFINAL                             0000809D    00000003 =           3. bytes (REL,CON)
+GSINIT                              00008083    0000001A =          26. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -72,31 +74,86 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CODE                                000080A0    0000011D =         285. bytes (REL,CON)
+GSFINAL                             0000809D    00000003 =           3. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     000080A0  _main                              blinky
-     000080D3  _Delay                             blinky
-     000080DD  _GPIO_DeInit                       stm8s_gpio
-     000080F8  _GPIO_Init                         stm8s_gpio
-     00008170  _GPIO_Write                        stm8s_gpio
-     00008176  _GPIO_WriteHigh                    stm8s_gpio
-     0000817D  _GPIO_WriteLow                     stm8s_gpio
-     0000818B  _GPIO_WriteReverse                 stm8s_gpio
-     00008192  _GPIO_ReadOutputData               stm8s_gpio
-     00008196  _GPIO_ReadInputData                stm8s_gpio
-     0000819B  _GPIO_ReadInputPin                 stm8s_gpio
-     000081A2  _GPIO_ExternalPullUpConfig         stm8s_gpio
 ASxxxx Linker V03.00 + NoICE + sdld,  page 7.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+CODE                                000080A0    0000103F =        4159. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+     000080A0  _setUpClock                        blinky
+     000080B7  _setUpTimer4                       blinky
+     000080C8  _Timer4UpdateIRQHandler            blinky
+     0000811A  _micros                            blinky
+     00008195  _delay                             blinky
+     00008206  _putchar                           blinky
+     00008214  _setUpSerial                       blinky
+     00008221  _charFromHex                       blinky
+     00008266  _sendString                        blinky
+     00008278  _sendBuffer                        blinky
+     00008297  _printInt                          blinky
+     0000834E  _printf                            blinky
+     0000842B  _main                              blinky
+     00008495  _assert_failed                     blinky
+     0000849F  _ADC1_DeInit                       stm8s_adc1
+     000084D0  _ADC1_Init                         stm8s_adc1
+     0000866C  _ADC1_Cmd                          stm8s_adc1
+     00008695  _ADC1_ScanModeCmd                  stm8s_adc1
+     000086C4  _ADC1_DataBufferCmd                stm8s_adc1
+     000086ED  _ADC1_ITConfig                     stm8s_adc1
+     0000874D  _ADC1_PrescalerConfig              stm8s_adc1
+     0000879E  _ADC1_SchmittTriggerConfig         stm8s_adc1
+     000088B2  _ADC1_ConversionConfig             stm8s_adc1
+     0000897E  _ADC1_ExternalTriggerConfig        stm8s_adc1
+     000089DA  _ADC1_StartConversion              stm8s_adc1
+     000089DF  _ADC1_GetConversionValue           stm8s_adc1
+     00008A2C  _ADC1_AWDChannelConfig             stm8s_adc1
+     00008B02  _ADC1_SetHighThreshold             stm8s_adc1
+     00008B12  _ADC1_SetLowThreshold              stm8s_adc1
+     00008B22  _ADC1_GetBufferValue               stm8s_adc1
+     00008B90  _ADC1_GetAWDChannelStatus          stm8s_adc1
+     00008C1B  _ADC1_GetFlagStatus                stm8s_adc1
+     00008CDB  _ADC1_ClearFlag                    stm8s_adc1
+     00008DAC  _ADC1_GetITStatus                  stm8s_adc1
+     00008E73  _ADC1_ClearITPendingBit            stm8s_adc1
+     00008FA9  __mullonglong                      _mullonglong
+     000090B5  __modsint                          
+     000090CB  __divsint                          
+
+ASxxxx Linker V03.00 + NoICE + sdld,  page 8.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+INITIALIZER                         000090DF    00000008 =           8. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+ASxxxx Linker V03.00 + NoICE + sdld,  page 9.
 
 Files Linked                              [ module(s) ]
 
 CMakeFiles/STM8S_SPL.dir/blinky.c.rel     [ blinky ]
-CMakeFiles/STM8S_SPL.dir/Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.c.rel
-                                          [ stm8s_gpio ]
+CMakeFiles/STM8S_SPL.dir/Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.c.rel
+                                          [ stm8s_adc1 ]
 
-ASxxxx Linker V03.00 + NoICE + sdld,  page 8.
+
+Libraries Linked                          [ object file ]
+
+/usr/local/bin/../share/sdcc/lib/stm8/stm8.lib
+                                          [ _mullonglong.rel ]
+/usr/local/bin/../share/sdcc/lib/stm8/stm8.lib
+                                          [ _modsint.rel ]
+/usr/local/bin/../share/sdcc/lib/stm8/stm8.lib
+                                          [ _divsint.rel ]
+
+ASxxxx Linker V03.00 + NoICE + sdld,  page 10.
 
 User Base Address Definitions
 

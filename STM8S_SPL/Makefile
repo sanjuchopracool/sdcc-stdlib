@@ -123,32 +123,32 @@ STM8S_SPL/fast:
 	$(MAKE) -f CMakeFiles/STM8S_SPL.dir/build.make CMakeFiles/STM8S_SPL.dir/build
 .PHONY : STM8S_SPL/fast
 
-Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.rel: Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.c.rel
+Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.rel: Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.c.rel
 
-.PHONY : Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.rel
+.PHONY : Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.rel
 
 # target to build an object file
-Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.c.rel:
-	$(MAKE) -f CMakeFiles/STM8S_SPL.dir/build.make CMakeFiles/STM8S_SPL.dir/Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.c.rel
-.PHONY : Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.c.rel
+Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.c.rel:
+	$(MAKE) -f CMakeFiles/STM8S_SPL.dir/build.make CMakeFiles/STM8S_SPL.dir/Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.c.rel
+.PHONY : Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.c.rel
 
-Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.i: Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.c.i
+Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.i: Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.c.i
 
-.PHONY : Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.i
+.PHONY : Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.i
 
 # target to preprocess a source file
-Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.c.i:
-	$(MAKE) -f CMakeFiles/STM8S_SPL.dir/build.make CMakeFiles/STM8S_SPL.dir/Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.c.i
-.PHONY : Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.c.i
+Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.c.i:
+	$(MAKE) -f CMakeFiles/STM8S_SPL.dir/build.make CMakeFiles/STM8S_SPL.dir/Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.c.i
+.PHONY : Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.c.i
 
-Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.s: Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.c.s
+Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.s: Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.c.s
 
-.PHONY : Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.s
+.PHONY : Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.s
 
 # target to generate assembly for a file
-Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.c.s:
-	$(MAKE) -f CMakeFiles/STM8S_SPL.dir/build.make CMakeFiles/STM8S_SPL.dir/Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.c.s
-.PHONY : Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.c.s
+Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.c.s:
+	$(MAKE) -f CMakeFiles/STM8S_SPL.dir/build.make CMakeFiles/STM8S_SPL.dir/Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.c.s
+.PHONY : Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.c.s
 
 blinky.rel: blinky.c.rel
 
@@ -186,9 +186,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... STM8S_SPL"
-	@echo "... Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.rel"
-	@echo "... Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.i"
-	@echo "... Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_gpio.s"
+	@echo "... Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.rel"
+	@echo "... Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.i"
+	@echo "... Users/sanju/Downloads/STM8/STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_adc1.s"
 	@echo "... blinky.rel"
 	@echo "... blinky.i"
 	@echo "... blinky.s"

@@ -36,18 +36,18 @@
 /* Uncomment the line below to enable peripheral header file inclusion */
 #if defined(STM8S105) || defined(STM8S005) || defined(STM8S103) || defined(STM8S003) ||\
     defined(STM8S903) || defined (STM8AF626x)
-//#include "stm8s_adc1.h"
+#include "stm8s_adc1.h"
 #endif /* (STM8S105) ||(STM8S103) || (STM8S903) || STM8AF626x*/
 #if defined(STM8S208) || defined(STM8S207) || defined(STM8S007) || defined (STM8AF52Ax) ||\
     defined (STM8AF62Ax)
- #include "stm8s_adc2.h"
+// #include "stm8s_adc2.h"
 #endif /* (STM8S208) || (STM8S207) || (STM8AF62Ax) || (STM8AF52Ax) */
 //#include "stm8s_awu.h"
 //#include "stm8s_beep.h"
 #if defined (STM8S208) || defined (STM8AF52Ax)
  #include "stm8s_can.h"
 #endif /* STM8S208 || STM8AF52Ax */
-//#include "stm8s_clk.h"
+#include "stm8s_clk.h"
 //#include "stm8s_exti.h"
 //#include "stm8s_flash.h"
 #include "stm8s_gpio.h"
@@ -88,7 +88,7 @@
 /* Exported constants --------------------------------------------------------*/
 /* Uncomment the line below to expanse the "assert_param" macro in the
    Standard Peripheral Library drivers code */
-//#define USE_FULL_ASSERT    (1)
+#define USE_FULL_ASSERT    (1)
 
 /* Exported macro ------------------------------------------------------------*/
 #ifdef  USE_FULL_ASSERT
