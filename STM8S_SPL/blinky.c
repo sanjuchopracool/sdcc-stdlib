@@ -340,7 +340,6 @@ void initSPI()
     // No change required for mosi, miso, sck
 
     SPI_CR1 = 0x44;
-    SPI_CR2 = 0x03;
 
     // Set CS pin in Output push-pull high level.
     PA_DDR |= 0x08;
