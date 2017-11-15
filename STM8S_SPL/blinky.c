@@ -99,34 +99,45 @@ void setUpClock()
 void setUpTimer4()
 {
     // main clock 16 MHZ
-    // prescaler 64
-    // timer clock 250KHz
+    // prescaler 128
+    // timer clock 125KHz
     // Counter 250
-    // interrupt at every 1ms
+    // interrupt at every 2ms
 
-    TIM4_PSCR = 0x06;
+    TIM4_PSCR = 0x07;
     TIM4_ARR = 249;
     TIM4_IER = 0x01;
     TIM4_CR1 = 0x01;
 }
 
-unsigned long long millis = 0;
+unsigned tim4Counter = 0; //will become one after every 400ms
+bool flag50ms = 0;
+
 void Timer4UpdateIRQHandler(void) __interrupt(23)
 {
-    millis++;
+    tim4Counter++;
+
+    // Set other timout things here
+    if (tim4Counter % 25)
+        flag50ms = 1;
+
+
+    if(tim4Counter == 200 )
+        tim4Counter = 1;
+
     TIM4_SR = 0x00;
 }
 
-unsigned long long micros()
-{
-    return (millis*1000 + (TIM4_CNTR + 1)*4 );
-}
+//unsigned long long micros()
+//{
+//    return (millis*1000 + (TIM4_CNTR + 1)*4 );
+//}
 
-void delay( unsigned long inMs )
-{
-    unsigned long long offset = millis + inMs;
-    while( offset >= millis );
-}
+//void delay( unsigned long inMs )
+//{
+//    unsigned long long offset = millis + inMs;
+//    while( offset >= millis );
+//}
 
 ///////////////////////////////////////////////////////////////////////////////
 ////////////////////// UART1 //////////////////////////////////////////////////
@@ -454,6 +465,7 @@ int main()
 {
     uint8_t value = 0;
     uint8_t index = 0;
+    uint16_t adcValue = 0;
 
     setUpClock();
     setUpSerial();
@@ -471,17 +483,28 @@ int main()
     ADC1_CR1 = 0x21;
 
     initSPI();
+
+    printf("Size %d\n", sizeof(adcValue));
     // keep default alignment, no scan node, no trigger
     while( 1 )
     {
-        printf("Working?\n");
-        for( index = 0; index < 8; ++index)
+//        printf("Working?\n");
+//        for( index = 0; index < 8; ++index)
+//        {
+//            nrfSetRegister(index, index);
+//            value = nrfGetRegister(index);
+//            printf("%d %d\n",index, value);
+//        }
+//        delay( 1000 );
+
+        // ADC low pass filter
+        adcValue = (adcValue*8 + getADCValue(4)*2 )/ 10;
+
+        if( flag50ms )
         {
-            nrfSetRegister(index, index);
-            value = nrfGetRegister(index);
-            printf("%d %d\n",index, value);
+            printf("%d\n",adcValue);
+            flag50ms = 0;
         }
-        delay( 1000 );
     }
 }
 
