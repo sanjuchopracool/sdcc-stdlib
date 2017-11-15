@@ -110,20 +110,22 @@ void setUpTimer4()
     TIM4_CR1 = 0x01;
 }
 
-unsigned tim4Counter = 0; //will become one after every 400ms
-bool flag50ms = 0;
+unsigned tim4Counter; //will become one after every 400ms
+bool flag50ms;
 
 void Timer4UpdateIRQHandler(void) __interrupt(23)
 {
     tim4Counter++;
 
     // Set other timout things here
-    if (tim4Counter % 25)
+    if (0 == (tim4Counter % 25))
         flag50ms = 1;
 
 
     if(tim4Counter == 200 )
+    {
         tim4Counter = 1;
+    }
 
     TIM4_SR = 0x00;
 }
@@ -208,7 +210,7 @@ void sendBuffer(const char *msg,uint16_t num)
 
 }
 
-void printInt(int n, unsigned char base)
+void printInt(int32_t n, unsigned char base)
 {
     char buffer[11] = {0};
     char i = 9;
@@ -243,7 +245,7 @@ void printf(char* format,...)
 {
     va_list ap;	/* points to each unnamed arg in turn */
     char *p,*sval;
-    int ival;
+    int32_t ival;
 
     va_start(ap,format);	/* make ap point to 1st unnamed arg */
 
@@ -258,12 +260,12 @@ void printf(char* format,...)
         switch(*++p)
         {
         case 'd':
-            ival = va_arg(ap,int);
+            ival = va_arg(ap,int32_t);
             printInt(ival, 10);
             break;
         case 'X':
         case 'x':
-            ival = va_arg(ap,int);
+            ival = va_arg(ap,int32_t);
             printInt(ival, 16);
             break;
         case 's':
@@ -465,7 +467,9 @@ int main()
 {
     uint8_t value = 0;
     uint8_t index = 0;
-    uint16_t adcValue = 0;
+    uint32_t adcValue = 0;
+    uint32_t temp32i = 0;
+//    int32_t count = 0;
 
     setUpClock();
     setUpSerial();
@@ -484,8 +488,9 @@ int main()
 
     initSPI();
 
-    printf("Size %d\n", sizeof(adcValue));
+    printf("Size %d\n", (int32_t)(sizeof(adcValue)));
     // keep default alignment, no scan node, no trigger
+
     while( 1 )
     {
 //        printf("Working?\n");
@@ -498,11 +503,15 @@ int main()
 //        delay( 1000 );
 
         // ADC low pass filter
-        adcValue = (adcValue*8 + getADCValue(4)*2 )/ 10;
+//        count++;
+        temp32i = getADCValue(4);
+        adcValue = (adcValue*9 + (temp32i << 10) )/ 10;
+//        printf("%d %d\n",(int32_t)(adcValue >> 10), temp32i);
 
         if( flag50ms )
         {
-            printf("%d\n",adcValue);
+            printf("%d %d\n",(int32_t)(adcValue >> 10), (int32_t)getADCValue(4));
+//            count = 0;
             flag50ms = 0;
         }
     }
