@@ -66,6 +66,9 @@
 #define PF_CR1 *(__IO uint8_t*)0x501C
 #define PF_CR2 *(__IO uint8_t*)0x501D
 
+/*EXTI*/
+#define EXTI_CR1        *(__IO uint8_t*)0x50A0
+#define EXTI_CR2        *(__IO uint8_t*)0x50A1
 ///////////////////////////////////////////////////////////////////////////////
 ////////////////////// CLOCK set AT 16MHz HSI /////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -110,21 +113,23 @@ void setUpTimer4()
     TIM4_CR1 = 0x01;
 }
 
-unsigned tim4Counter; //will become one after every 400ms
-bool flag50ms;
-
+volatile unsigned tim4Counter; //will become one after every 400ms
+volatile bool flag50ms;
+//volatile unsigned long millis;
 void Timer4UpdateIRQHandler(void) __interrupt(23)
 {
     tim4Counter++;
+//    millis++;
 
     // Set other timout things here
-    if (0 == (tim4Counter % 25))
-        flag50ms = 1;
+//    if (0 == (tim4Counter % 25))
+//        flag50ms = 1;
 
 
     if(tim4Counter == 200 )
     {
         tim4Counter = 1;
+        flag50ms = 1;
     }
 
     TIM4_SR = 0x00;
@@ -137,7 +142,7 @@ void Timer4UpdateIRQHandler(void) __interrupt(23)
 
 //void delay( unsigned long inMs )
 //{
-//    unsigned long long offset = millis + inMs;
+//    unsigned long offset = millis + inMs;
 //    while( offset >= millis );
 //}
 
@@ -461,7 +466,21 @@ uint8_t nrfWrite(uint8_t *data, uint8_t count)
     CS_HIGH();
     return count;
 }
+// togle PC3
+uint8_t toggled = 0;
+void togglePC3()
+{
+    if ( toggled)
+    {
+        PC_ODR &= 0xF7;
+    }
+    else
+    {
+        PC_ODR |= 0x08;
+    }
 
+    toggled = !toggled;
+}
 ///////////////////////////////////////////////////////////////////////////////
 int main()
 {
@@ -473,13 +492,31 @@ int main()
 
     setUpClock();
     setUpSerial();
+
     // Configure pins
     PB_DDR = 0x20;
     PB_CR1 = 0x20;
 
-    // Timer related stuff
+//    // Timer related stuff
     setUpTimer4();
-    enableInterrupts();
+
+    // OutPut
+    {
+        //PC3
+        PC_DDR |= 0x08; // Direction
+        PC_CR1 |= 0x08; // Push pull (Required)
+        PC_CR2 |= 0x08; // Fast (10MHz)
+    }
+
+    // SetUP external interrupt
+//    {
+        //PC4
+//        PC_DDR &= (uint8_t)(~(0x10)); //Already reset
+//        PC_CR1 &= (uint8_t)(~(0x10)); //Already reset
+        PC_CR2 |= 0x10;
+        EXTI_CR1 |= 0x20;
+        EXTI_CR2 = 0x00;
+//    }
 
     // ADC related stuff
     // Default value is fine input pins
@@ -488,11 +525,15 @@ int main()
 
     initSPI();
 
-    printf("Size %d\n", (int32_t)(sizeof(adcValue)));
     // keep default alignment, no scan node, no trigger
 
+
+    enableInterrupts();
     while( 1 )
     {
+//        delay(2500);
+//        togglePC3();
+
 //        printf("Working?\n");
 //        for( index = 0; index < 8; ++index)
 //        {
@@ -500,21 +541,28 @@ int main()
 //            value = nrfGetRegister(index);
 //            printf("%d %d\n",index, value);
 //        }
-//        delay( 1000 );
 
-        // ADC low pass filter
-//        count++;
-        temp32i = getADCValue(4);
-        adcValue = (adcValue*9 + (temp32i << 10) )/ 10;
-//        printf("%d %d\n",(int32_t)(adcValue >> 10), temp32i);
+//        // ADC low pass filter
+////        count++;
+//        temp32i = getADCValue(4);
+//        adcValue = (adcValue*9 + (temp32i << 10) )/ 10;
+////        printf("%d %d\n",(int32_t)(adcValue >> 10), temp32i);
 
         if( flag50ms )
         {
-            printf("%d %d\n",(int32_t)(adcValue >> 10), (int32_t)getADCValue(4));
+//            printf("%d %d\n",(int32_t)(adcValue >> 10), (int32_t)getADCValue(4));
 //            count = 0;
+            togglePC3();
             flag50ms = 0;
         }
     }
+}
+
+void ExtiPortCIRQHandler(void) __interrupt(5)
+{
+    // if PC4
+    if ( 0 == (PC_IDR & 0x10)) // Active low
+        putchar('I');
 }
 
 #ifdef USE_FULL_ASSERT
