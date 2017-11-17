@@ -1,0 +1,102 @@
+#include "nrf24.h"
+#include "common.h"
+#include "spi.h"
+
+///////////////////////////////////////////////////////////////////////////////
+/////////////////////////// NRF24L01P ///////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+#define SPI_CMD_RD_REG            0x00
+#define SPI_CMD_WR_REG            0x20
+#define SPI_CMD_RD_RX_PAYLOAD     0x61
+#define SPI_CMD_WR_TX_PAYLOAD     0xa0
+#define SPI_CMD_R_RX_PL_WID       0x60
+#define SPI_CMD_FLUSH_TX          0xe1
+#define SPI_CMD_FLUSH_RX          0xe2
+
+#define SPI_CMD_NOP               0xff
+#define TIMING_Tpece2csn_us       4
+#define TIMING_Thce_us              10   //  10uS
+#define TIMING_Tpd2stby_us        4500   // 4.5mS worst case
+
+// CONFIG register:
+#define REG_CONFIG                0x00
+
+#define CONFIG_PRIM_RX        (1<<0)
+#define CONFIG_PWR_UP         (1<<1)
+#define CONFIG_CRC0           (1<<2)
+#define CONFIG_EN_CRC         (1<<3)
+#define CONFIG_MASK_MAX_RT    (1<<4)
+#define CONFIG_MASK_TX_DS     (1<<5)
+#define CONFIG_MASK_RX_DR     (1<<6)
+
+#define REG_EN_AA                 0x01
+
+#define REG_EN_RXADDR             0x02
+#define REG_SETUP_RETR            0x04
+#define REG_STATUS                0x07
+#define REG_RX_PW_P0              0x11
+
+// STATUS register:
+#define STATUS_TX_FULL        (1<<0)
+#define STATUS_RX_P_NO        (0x7<<1)
+#define STATUS_MAX_RT         (1<<4)
+#define STATUS_TX_DS          (1<<5)
+#define STATUS_RX_DR          (1<<6)
+
+#define TX_FIFO_SIZE   32
+#define RX_FIFO_SIZE   32
+
+// EN_AA register:
+#define EN_AA_NONE            0
+
+// SETUP_RETR register:
+#define SETUP_RETR_NONE       0
+
+
+#define CS_LOW()     PA_ODR &= (~(0x08))
+#define CS_HIGH()    PA_ODR |= 0x08;
+
+///////////////////////////////////////////////////////////////////////////////
+///         TODO:
+///         Add CE Code
+///         INTERRUPT CODE
+///////////////////////////////////////////////////////////////////////////////
+
+uint8_t nrfGetRegister(uint8_t inReg)
+{
+    uint8_t data = 0;
+    CS_LOW();
+    spiWriteRead(inReg);
+    data = spiWriteRead(0xFF);
+    CS_HIGH();
+    return data;
+}
+
+uint8_t mrfGetStatusRegister()
+{
+    uint8_t status = 0;
+    CS_LOW();
+    status  = spiWriteRead( SPI_CMD_NOP );
+    CS_HIGH();
+    return status;
+}
+
+void nrfSetRegister( uint8_t inReg, uint8_t inRegData ) {
+    CS_LOW();
+    spiWriteRead(SPI_CMD_WR_REG | inReg);
+    spiWriteRead(inRegData);
+    CS_HIGH();
+}
+
+// Make sure count is less than or equal to 32
+uint8_t nrfWrite(uint8_t *data, uint8_t count)
+{
+    uint8_t i;
+
+    CS_LOW();
+    spiWriteRead(SPI_CMD_WR_TX_PAYLOAD);
+    for (i = 0; i < count; i++ )
+        spiWriteRead(*data++);
+    CS_HIGH();
+    return count;
+}

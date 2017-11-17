@@ -7,6 +7,13 @@ add_definitions(-D STM8S103)
 include_directories( ${CMAKE_SOURCE_DIR}
                      ${CMAKE_SOURCE_DIR}/../STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/inc)
 
-set(SOURCES blinky.c)
+set(SOURCES
+    blinky.c
+    adc.c
+    serial.c
+    print.c
+    timer4.c
+    spi.c
+    nrf24.c)
 
 add_executable(${PROJECT} ${SOURCES})
