@@ -49,22 +49,11 @@ void Timer4UpdateIRQHandler(void) __interrupt(23)
 //    while( offset >= millis );
 //}
 
+// MACROS
+#define TRANSFER_SIZE 32
+///////////////////////////////////////////////////////////////////////////////
+uint8_t data[TRANSFER_SIZE] = "Hello !! How are you man?";
 
-// togle PC3
-uint8_t toggled = 0;
-void togglePC3()
-{
-    if ( toggled)
-    {
-        PC_ODR &= 0xF7;
-    }
-    else
-    {
-        PC_ODR |= 0x08;
-    }
-
-    toggled = !toggled;
-}
 ///////////////////////////////////////////////////////////////////////////////
 int main()
 {
@@ -85,36 +74,12 @@ int main()
 //    // Timer related stuff
     setUpTimer4();
 
-    // OutPut
-    {
-        //PC3
-        PC_DDR |= 0x08; // Direction
-        PC_CR1 |= 0x08; // Push pull (Required)
-        PC_CR2 |= 0x08; // Fast (10MHz)
-    }
-
-    // SetUP external interrupt
-//    {
-        //PC4
-//        PC_DDR &= (uint8_t)(~(0x10)); //Already reset
-//        PC_CR1 &= (uint8_t)(~(0x10)); //Already reset
-        PC_CR2 |= 0x10;
-        EXTI_CR1 |= 0x20;
-        EXTI_CR2 = 0x00;
-//    }
-
-    initSPI();
+    initNrf();
 
     // keep default alignment, no scan node, no trigger
 
 
-    printf("Working?\n");
-    for( index = 0; index < 8; ++index)
-    {
-        nrfSetRegister(index, index);
-        value = nrfGetRegister(index);
-        printf("%d %d\n",(int32_t)index, (int32_t)value);
-    }
+    printf("Welcome\n");
 
     enableInterrupts();
     while( 1 )
@@ -131,9 +96,7 @@ int main()
 
         if( flag50ms )
         {
-            printf("%d %d\n",(int32_t)(adcValue >> 10), (int32_t)getADCValue(4));
-//            count = 0;
-            togglePC3();
+            nrfWrite(data, TRANSFER_SIZE);
             flag50ms = 0;
         }
     }
@@ -143,7 +106,22 @@ void ExtiPortCIRQHandler(void) __interrupt(5)
 {
     // if PC4
     if ( 0 == (PC_IDR & 0x10)) // Active low
-        putchar('I');
+    {
+        uint8_t status = nrfGetStatusRegister();
+        if ( status & STATUS_TX_DS)
+        {
+            nrfSetRegister(REG_STATUS, STATUS_TX_DS);
+            putchar('I');
+            putchar('T');
+        }
+        else if ( status & STATUS_MAX_RT)
+        {
+            nrfSetRegister(REG_STATUS, STATUS_MAX_RT);
+            nrfFlushTxFifo();
+            putchar('I');
+            putchar('R');
+        }
+    }
 }
 
 #ifdef USE_FULL_ASSERT

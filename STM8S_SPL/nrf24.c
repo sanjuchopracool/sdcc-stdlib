@@ -33,15 +33,8 @@
 
 #define REG_EN_RXADDR             0x02
 #define REG_SETUP_RETR            0x04
-#define REG_STATUS                0x07
 #define REG_RX_PW_P0              0x11
 
-// STATUS register:
-#define STATUS_TX_FULL        (1<<0)
-#define STATUS_RX_P_NO        (0x7<<1)
-#define STATUS_MAX_RT         (1<<4)
-#define STATUS_TX_DS          (1<<5)
-#define STATUS_RX_DR          (1<<6)
 
 #define TX_FIFO_SIZE   32
 #define RX_FIFO_SIZE   32
@@ -56,11 +49,70 @@
 #define CS_LOW()     PA_ODR &= (~(0x08))
 #define CS_HIGH()    PA_ODR |= 0x08;
 
+// raise CE to enable the RF transmission
+#define NRF24L01P_RaiseCE() PC_ODR |= 0x08
+// drop CE to disable RF Transmission
+#define NRF24L01P_DropCE()  PC_ODR &= 0xF7
+
 ///////////////////////////////////////////////////////////////////////////////
 ///         TODO:
 ///         Add CE Code
 ///         INTERRUPT CODE
 ///////////////////////////////////////////////////////////////////////////////
+
+void initNrf()
+{
+    initSPI();
+
+    // Set CS pin in Output push-pull high level.
+    // PA3
+    PA_DDR |= 0x08;
+    PA_CR1 |= 0x08;
+    PA_CR2 |= 0x08;
+
+    //PC3
+    // CE
+    PC_DDR |= 0x08; // Direction
+    PC_CR1 |= 0x08; // Push pull (Required)
+    PC_CR2 |= 0x08; // Fast (10MHz)
+
+    // INTERRUPT
+    //PC4
+//        PC_DDR &= (uint8_t)(~(0x10)); //Already reset
+//        PC_CR1 &= (uint8_t)(~(0x10)); //Already reset
+    PC_CR2 |= 0x10;
+    EXTI_CR1 |= 0x20;
+    EXTI_CR2 = 0x00;
+
+    // Set settings
+    // clear all pending interrupts
+    nrfSetRegister(REG_STATUS,
+                STATUS_MAX_RT|
+                STATUS_TX_DS|
+                STATUS_RX_DR);   // Clear any pending interrupts
+
+
+    nrfSetRegister(REG_CONFIG,
+                CONFIG_EN_CRC |
+                CONFIG_MASK_RX_DR |
+                CONFIG_PWR_UP);
+
+    // Enable AutoAcknowledgement for pipe 0
+    nrfSetRegister(REG_EN_AA, 0x01);
+
+    // enable only first rx pipe
+    // we want only one to one communication
+    nrfSetRegister( REG_EN_RXADDR, 0x01 );
+
+    // set transfer size
+    // of 32 bytes, it can be between 1-32
+    // it is not required at TX Side
+    // It is only required at RX Side
+    //        setRegister(REG_RX_PW_P0, TRANSFER_SIZE );
+
+    // enable transmission
+    NRF24L01P_RaiseCE();
+}
 
 uint8_t nrfGetRegister(uint8_t inReg)
 {
@@ -72,7 +124,7 @@ uint8_t nrfGetRegister(uint8_t inReg)
     return data;
 }
 
-uint8_t mrfGetStatusRegister()
+uint8_t nrfGetStatusRegister()
 {
     uint8_t status = 0;
     CS_LOW();
@@ -85,6 +137,14 @@ void nrfSetRegister( uint8_t inReg, uint8_t inRegData ) {
     CS_LOW();
     spiWriteRead(SPI_CMD_WR_REG | inReg);
     spiWriteRead(inRegData);
+    CS_HIGH();
+}
+
+void nrfFlushTxFifo()
+{
+    CS_LOW();
+    spiWriteRead(SPI_CMD_FLUSH_TX);
+    spiWriteRead(SPI_CMD_NOP);
     CS_HIGH();
 }
 
