@@ -16,7 +16,7 @@ void setUpTimer4()
     // interrupt at every 2ms
 
     TIM4_PSCR = 0x07;
-    TIM4_ARR = 250;
+    TIM4_ARR = 249;
     TIM4_IER = 0x01;
     TIM4_CR1 = 0x01;
 }
