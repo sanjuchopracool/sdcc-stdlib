@@ -7,6 +7,10 @@
 #include "spi.h"
 #include "nrf24.h"
 
+///
+/// \brief setUpClock sets clock to internal
+/// HSI 16MHz clock
+///
 
 void setUpClock()
 {
@@ -16,8 +20,11 @@ void setUpClock()
     while( ( CLK_SWCR & 0x01 ) != 0 );
 }
 
+
+// interrupt at every 2ms
 volatile unsigned tim4Counter; //will become one after every 400ms
 volatile bool flag50ms;
+
 //volatile unsigned long millis;
 void Timer4UpdateIRQHandler(void) __interrupt(23)
 {

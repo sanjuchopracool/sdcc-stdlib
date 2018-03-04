@@ -3,6 +3,10 @@
 
 #include <stm8s.h>
 
+///
+/// \brief setUpSerial start serial communication
+/// at 9600 Baud Rate
+///
 void setUpSerial();
 
 void putchar(char c);
