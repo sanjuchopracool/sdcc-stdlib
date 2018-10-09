@@ -1,0 +1,28 @@
+1. Device : STM8S103F3
+
+Project Remote Control
+
+Requirements
+    3 ADC PINS
+    1 Connectivity and power status
+    4 SPI PINS
+    1 interrupt PINS FOR nrf24
+
+ADC
+    PD3(AIN4) - throttle
+    PD2(AIN3) - steering
+    PD6 (AIN6) - power setting
+
+Connectivity and power status
+    1 (PD4) LED POWER or BEEP
+    2 (PD1) connection status
+
+SPI PINS:
+    PC5, PC6, PC7, PA3
+
+INTERRUPT
+    PA1 - interrupt
+    PA2 - raise CE
+
+
+

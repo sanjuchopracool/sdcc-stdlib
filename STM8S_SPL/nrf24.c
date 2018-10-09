@@ -111,7 +111,7 @@ void initNrf()
     //        setRegister(REG_RX_PW_P0, TRANSFER_SIZE );
 
     // enable transmission
-    NRF24L01P_RaiseCE();
+//    NRF24L01P_RaiseCE();
 }
 
 uint8_t nrfGetRegister(uint8_t inReg)

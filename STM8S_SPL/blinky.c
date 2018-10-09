@@ -91,6 +91,8 @@ int main()
     enableInterrupts();
     while( 1 )
     {
+        if(index == 8)
+            index = 0;
 //        delay(2500);
 //        togglePC3();
 
@@ -99,11 +101,12 @@ int main()
 ////        count++;
 //        temp32i = getADCValue(4);
 //        adcValue = (adcValue*9 + (temp32i << 10) )/ 10;
-////        printf("%d %d\n",(int32_t)(adcValue >> 10), temp32i);
+//        printf("%d %d\n",(int32_t)(adcValue >> 10), temp32i);
 
         if( flag50ms )
         {
-            nrfWrite(data, TRANSFER_SIZE);
+            printf("%d\n", (uint32_t)nrfGetRegister((uint8_t)index++));
+//            nrfWrite(data, TRANSFER_SIZE);
             flag50ms = 0;
         }
     }
