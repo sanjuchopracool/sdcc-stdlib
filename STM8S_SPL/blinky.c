@@ -105,17 +105,23 @@ int main()
 
         if( flag50ms )
         {
-            printf("%d\n", (uint32_t)nrfGetRegister((uint8_t)index++));
+//            printf("%d\n", (uint32_t)nrfGetRegister((uint8_t)index++));
 //            nrfWrite(data, TRANSFER_SIZE);
             flag50ms = 0;
+            if(index == 0)
+            {
+                printf("S");
+                nrfWrite(data, TRANSFER_SIZE);
+            }
+            index++;
         }
     }
 }
 
-void ExtiPortCIRQHandler(void) __interrupt(5)
+void ExtiPortCIRQHandler(void) __interrupt(3)
 {
-    // if PC4
-    if ( 0 == (PC_IDR & 0x10)) // Active low
+    // if PA1
+    if ( 0 == (PA_IDR & 0x02)) // Active low
     {
         uint8_t status = nrfGetStatusRegister();
         if ( status & STATUS_TX_DS)

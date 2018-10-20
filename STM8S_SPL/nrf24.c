@@ -49,10 +49,10 @@
 #define CS_LOW()     PA_ODR &= (~(0x08))
 #define CS_HIGH()    PA_ODR |= 0x08;
 
-// raise CE to enable the RF transmission
-#define NRF24L01P_RaiseCE() PC_ODR |= 0x08
+// raise CE to enable the RF transmission PA2
+#define NRF24L01P_RaiseCE() PA_ODR |= 0x04
 // drop CE to disable RF Transmission
-#define NRF24L01P_DropCE()  PC_ODR &= 0xF7
+#define NRF24L01P_DropCE()  PA_ODR &= 0xFB
 
 ///////////////////////////////////////////////////////////////////////////////
 ///         TODO:
@@ -70,18 +70,18 @@ void initNrf()
     PA_CR1 |= 0x08;
     PA_CR2 |= 0x08;
 
-    //PC3
+    //PA2
     // CE
-    PC_DDR |= 0x08; // Direction
-    PC_CR1 |= 0x08; // Push pull (Required)
-    PC_CR2 |= 0x08; // Fast (10MHz)
+    PA_DDR |= 0x04; // Direction
+    PA_CR1 |= 0x04; // Push pull (Required)
+    PA_CR2 |= 0x04; // Fast (10MHz)
 
     // INTERRUPT
-    //PC4
-//        PC_DDR &= (uint8_t)(~(0x10)); //Already reset
-//        PC_CR1 &= (uint8_t)(~(0x10)); //Already reset
-    PC_CR2 |= 0x10;
-    EXTI_CR1 |= 0x20;
+    //PA1
+//        PA_DDR &= (uint8_t)(~(0x02)); //Already reset
+//        PA_CR1 &= (uint8_t)(~(0x02)); //Already reset
+    PA_CR2 |= 0x02;
+    EXTI_CR1 |= 0x02;
     EXTI_CR2 = 0x00;
 
     // Set settings
@@ -111,7 +111,7 @@ void initNrf()
     //        setRegister(REG_RX_PW_P0, TRANSFER_SIZE );
 
     // enable transmission
-//    NRF24L01P_RaiseCE();
+    NRF24L01P_RaiseCE();
 }
 
 uint8_t nrfGetRegister(uint8_t inReg)

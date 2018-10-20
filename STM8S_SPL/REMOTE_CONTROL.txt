@@ -23,6 +23,3 @@ SPI PINS:
 INTERRUPT
     PA1 - interrupt
     PA2 - raise CE
-
-
-
