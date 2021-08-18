@@ -1,21 +1,26 @@
 1. Device : STM8S103F3
 
-Project Remote Control
+RECEIVER PIN MAP
 
-Requirements
-    3 ADC PINS
-    1 Connectivity and power status
-    4 SPI PINS
-    1 interrupt PINS FOR nrf24
+FIXED PINS:
+PB5 - STATUS LED
 
-ADC
-    PD3(AIN4) - throttle
-    PD2(AIN3) - steering
-    PD6 (AIN6) - power setting
+TIMER OUTPUTS FOR SERVO OUTPUT
 
-Connectivity and power status
-    1 (PD4) LED POWER or BEEP
-    2 (PD1) connection status
+PD4 - TIM2_CH1
+PD3 - TIM2_CH2
+PD2 - TIM2_CH3
+PC4 - TIM1_CH4
+PC3 - TIM1_CH3
+
+INPUT VOLTAGE TELEMETERY:
+PD5 - AIN6
+
+1 RESET BUTTON NRST
+1 PIN FOR BIND
+1 PIN TX
+1 PIN FAILSAFE
+1 PIN for PPM ?
 
 SPI PINS:
     PC5, PC6, PC7, PA3

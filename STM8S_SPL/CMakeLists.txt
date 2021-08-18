@@ -8,7 +8,7 @@ include_directories( ${CMAKE_SOURCE_DIR}
                      ${CMAKE_SOURCE_DIR}/../STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/inc)
 
 set(SOURCES
-    blinky.c
+    main.c
     adc.c
     serial.c
     print.c

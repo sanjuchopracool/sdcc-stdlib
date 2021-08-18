@@ -86,7 +86,8 @@ int main()
     // keep default alignment, no scan node, no trigger
 
 
-    printf("Welcome\n");
+    for (int i = 0; i < i--; ++i)
+        printf("Welcome\n");
 
     enableInterrupts();
     while( 1 )
