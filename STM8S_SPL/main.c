@@ -6,6 +6,7 @@
 #include "timer4.h"
 #include "spi.h"
 #include "nrf24.h"
+#include "pwm.h"
 
 ///
 /// \brief setUpClock sets clock to internal
@@ -79,6 +80,7 @@ int main()
     PB_CR1 = 0x20;
 
 //    // Timer related stuff
+    initPwm();
     setUpTimer4();
 
     initNrf();
@@ -86,7 +88,7 @@ int main()
     // keep default alignment, no scan node, no trigger
 
 
-    for (int i = 0; i < i--; ++i)
+    for (int i = 0; i < 100; ++i)
         printf("Welcome\n");
 
     enableInterrupts();

@@ -63,3 +63,5 @@ target_wrapper.*
 
 # QtCtreator CMake
 CMakeLists.txt.user*
+CMakeCache.txt.prev
+qtcsettings.cmake
