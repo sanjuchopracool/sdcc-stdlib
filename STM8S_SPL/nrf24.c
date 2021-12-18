@@ -34,7 +34,11 @@
 #define REG_EN_RXADDR             0x02
 #define REG_SETUP_RETR            0x04
 #define REG_RX_PW_P0              0x11
+#define REG_SETUP_AW              0x03
+#define REG_RF_SETUP              0x06
 
+#define RF_250KBPS                  (1<<5)
+#define RF_MAX_POWER                (3<<1)
 
 #define TX_FIFO_SIZE   32
 #define RX_FIFO_SIZE   32
@@ -64,8 +68,7 @@ void initNrf()
 {
     initSPI();
 
-    // Set CS pin in Output push-pull high level.
-    // PA3
+    // PA1(interrupt),PA2(CE),PA3(CSN)
     PA_DDR |= 0x08;
     PA_CR1 |= 0x08;
     PA_CR2 |= 0x08;
@@ -91,12 +94,22 @@ void initNrf()
                 STATUS_TX_DS|
                 STATUS_RX_DR);   // Clear any pending interrupts
 
-
+#ifdef RECEIVER
+    nrfSetRegister(REG_CONFIG,
+                CONFIG_EN_CRC |
+                CONFIG_MASK_TX_DS | CONFIG_MASK_MAX_RT |
+                CONFIG_PWR_UP);
+#else
     nrfSetRegister(REG_CONFIG,
                 CONFIG_EN_CRC |
                 CONFIG_MASK_RX_DR |
                 CONFIG_PWR_UP);
+#endif
 
+    // set 250KBPS DATA RATE
+    // MAX POWER
+    nrfSetRegister(REG_RF_SETUP,
+                   RF_250KBPS|RF_MAX_POWER);
     // Enable AutoAcknowledgement for pipe 0
     nrfSetRegister(REG_EN_AA, 0x01);
 
@@ -108,7 +121,9 @@ void initNrf()
     // of 32 bytes, it can be between 1-32
     // it is not required at TX Side
     // It is only required at RX Side
-    //        setRegister(REG_RX_PW_P0, TRANSFER_SIZE );
+#ifdef RECEIVER
+    nrfSetRegister(REG_RX_PW_P0, 32);
+#endif
 
     // enable transmission
     NRF24L01P_RaiseCE();
@@ -159,4 +174,35 @@ uint8_t nrfWrite(uint8_t *data, uint8_t count)
         spiWriteRead(*data++);
     CS_HIGH();
     return count;
+}
+
+uint8_t nrfIsConnected()
+{
+      uint8_t setup = nrfGetRegister(REG_SETUP_AW);
+      return (setup >= 1 && setup <= 3);
+}
+
+void nrfSetPALevel(NRF_POWER_LEVEL level)
+{
+    uint8_t setup = nrfGetRegister(REG_RF_SETUP) & 0xF8;
+    if(level > 3){  						// If invalid level, go to max PA
+        level = (RF24_PA_MAX << 1) + 1;		// +1 to support the SI24R1 chip extra bit
+    }else{
+        level = (level << 1) + 1;	 		// Else set level as requested
+    }
+    nrfSetRegister(REG_RF_SETUP, setup |= level);	// Write it to the chip
+}
+
+void nrfSetReceiveMode()
+{
+    uint8_t theConfig = nrfGetRegister(REG_CONFIG);
+    theConfig |= CONFIG_PRIM_RX;
+    nrfSetRegister(REG_CONFIG, theConfig);
+}
+
+void nrfSetTransmitMode()
+{
+    uint8_t theConfig = nrfGetRegister(REG_CONFIG);
+    theConfig &= ~CONFIG_PRIM_RX;
+    nrfSetRegister(REG_CONFIG, theConfig);
 }

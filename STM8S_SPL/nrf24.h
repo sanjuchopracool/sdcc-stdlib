@@ -19,5 +19,11 @@ uint8_t nrfGetStatusRegister();
 void nrfSetRegister( uint8_t inReg, uint8_t inRegData );
 uint8_t nrfWrite(uint8_t *data, uint8_t count);
 void nrfFlushTxFifo();
+uint8_t nrfIsConnected();
 
+typedef enum { RF24_PA_MIN = 0,RF24_PA_LOW, RF24_PA_HIGH, RF24_PA_MAX, RF24_PA_ERROR } NRF_POWER_LEVEL ;
+typedef enum { RF24_1MBPS = 0, RF24_2MBPS, RF24_250KBPS } NRF_DATA_RATE;
+void nrfSetPALevel (NRF_POWER_LEVEL level);
+void nrfSetReceiveMode();
+void nrfSetTransmitMode();
 #endif // NRF24_H

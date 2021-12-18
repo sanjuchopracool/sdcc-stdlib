@@ -7,6 +7,7 @@
 #include "spi.h"
 #include "nrf24.h"
 #include "pwm.h"
+#include "led.h"
 
 ///
 /// \brief setUpClock sets clock to internal
@@ -22,24 +23,23 @@ void setUpClock()
 }
 
 
-// interrupt at every 2ms
-volatile unsigned tim4Counter; //will become one after every 400ms
-volatile bool flagHalfSecond;
+volatile uint8_t tim4Counter;
+volatile uint8_t flagHalfSecond;
 
 //volatile unsigned long millis;
 void Timer4UpdateIRQHandler(void) __interrupt(23)
 {
     tim4Counter++;
-//    millis++;
+    //    millis++;
 
     // Set other timout things here
-//    if (0 == (tim4Counter % 25))
-//        flag50ms = 1;
+    //    if (0 == (tim4Counter % 25))
+    //        flag50ms = 1;
 
 
-    if(tim4Counter == 200 )
+    if(tim4Counter == 250 )
     {
-        tim4Counter = 1;
+        tim4Counter = 0;
         flagHalfSecond = 1;
     }
 
@@ -58,6 +58,7 @@ void Timer4UpdateIRQHandler(void) __interrupt(23)
 //}
 
 // MACROS
+
 #define TRANSFER_SIZE 32
 ///////////////////////////////////////////////////////////////////////////////
 uint8_t data[TRANSFER_SIZE] = "Hello !! How are you man?";
@@ -65,58 +66,25 @@ uint8_t data[TRANSFER_SIZE] = "Hello !! How are you man?";
 ///////////////////////////////////////////////////////////////////////////////
 int main()
 {
-    uint8_t value = 0;
-    uint8_t index = 0;
-    uint32_t adcValue = 0;
-    uint32_t temp32i = 0;
-//    int32_t count = 0;
-
     setUpClock();
     setUpSerial();
-//    initADC();
-
-    // Configure pins
-    PB_DDR = 0x20;
-    PB_CR1 = 0x20;
-
-//    // Timer related stuff
-//    initPwm();
+    initLED();
+    // timer 4 provides 2 ms interrupt, no way to increase delay, with 16MHz
     setUpTimer4();
-
     initNrf();
-
-    // keep default alignment, no scan node, no trigger
-
-
-    for (int i = 0; i < 100; ++i)
-        printf("Welcome\n");
-
+    printf("CHIP ");
+    if (!nrfIsConnected()) {
+        printf("NOT ");
+    }
+    printf("CONNECTED\n");
     enableInterrupts();
     while( 1 )
     {
-        if(index == 8)
-            index = 0;
-//        delay(2500);
-//        togglePC3();
-
-
-//        // ADC low pass filter
-////        count++;
-//        temp32i = getADCValue(4);
-//        adcValue = (adcValue*9 + (temp32i << 10) )/ 10;
-//        printf("%d %d\n",(int32_t)(adcValue >> 10), temp32i);
-
         if( flagHalfSecond )
         {
-//            printf("%d\n", (uint32_t)nrfGetRegister((uint8_t)index++));
-//            nrfWrite(data, TRANSFER_SIZE);
             flagHalfSecond = 0;
-            if(index == 0)
-            {
-                printf("S");
-                nrfWrite(data, TRANSFER_SIZE);
-            }
-            index++;
+            toggleLED();
+            nrfWrite(data, TRANSFER_SIZE);
         }
     }
 }
@@ -132,6 +100,7 @@ void ExtiPortCIRQHandler(void) __interrupt(3)
             nrfSetRegister(REG_STATUS, STATUS_TX_DS);
             putchar('I');
             putchar('T');
+            putchar('\n');
         }
         else if ( status & STATUS_MAX_RT)
         {
@@ -139,6 +108,7 @@ void ExtiPortCIRQHandler(void) __interrupt(3)
             nrfFlushTxFifo();
             putchar('I');
             putchar('R');
+            putchar('\n');
         }
     }
 }

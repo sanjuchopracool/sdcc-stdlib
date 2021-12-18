@@ -7,6 +7,7 @@
 #include "spi.h"
 #include "nrf24.h"
 #include "pwm.h"
+#include "led.h"
 
 ///
 /// \brief setUpClock sets clock to internal
@@ -24,6 +25,7 @@ void setUpClock()
 
 volatile uint8_t tim4Counter;
 volatile uint8_t flagHalfSecond;
+volatile uint8_t dataReceived;
 
 //volatile unsigned long millis;
 void Timer4UpdateIRQHandler(void) __interrupt(23)
@@ -58,21 +60,6 @@ void Timer4UpdateIRQHandler(void) __interrupt(23)
 
 // MACROS
 
-uint8_t toggled = 0;
-void togglePC3()
-{
-    if ( toggled)
-    {
-        PB_ODR &= 0xDF;
-    }
-    else
-    {
-        PB_ODR |= 0x20;
-    }
-
-    toggled = !toggled;
-}
-
 #define TRANSFER_SIZE 32
 ///////////////////////////////////////////////////////////////////////////////
 uint8_t data[TRANSFER_SIZE] = "Hello !! How are you man?";
@@ -82,54 +69,46 @@ int main()
 {
     setUpClock();
     setUpSerial();
+    initLED();
     // timer 4 provides 2 ms interrupt, no way to increase delay, with 16MHz
     setUpTimer4();
-
-
-//    initNrf();
-
-    for (int i = 0; i < 100; ++i)
-        printf("Welcome\n");
-    // LED
-    {
-        //PB5
-        PB_DDR |= 0x20; // Direction
-        PB_CR1 |= 0x20; // Push pull (Required)
-        PB_CR2 |= 0x20; // Fast (10MHz)
+    initNrf();
+    printf("CHIP ");
+    if (!nrfIsConnected()) {
+        printf("NOT ");
     }
-
+    printf("CONNECTED\n");
     enableInterrupts();
+    nrfSetReceiveMode();
     while( 1 )
     {
+        if (dataReceived) {
+            dataReceived = 0;
+            putchar('R');
+            putchar('C');
+            putchar('\n');
+        }
         if( flagHalfSecond )
         {
             flagHalfSecond = 0;
-            togglePC3();
+            toggleLED();
         }
     }
 }
 
-//void ExtiPortCIRQHandler(void) __interrupt(3)
-//{
-//    // if PA1
-//    if ( 0 == (PA_IDR & 0x02)) // Active low
-//    {
-//        uint8_t status = nrfGetStatusRegister();
-//        if ( status & STATUS_TX_DS)
-//        {
-//            nrfSetRegister(REG_STATUS, STATUS_TX_DS);
-//            putchar('I');
-//            putchar('T');
-//        }
-//        else if ( status & STATUS_MAX_RT)
-//        {
-//            nrfSetRegister(REG_STATUS, STATUS_MAX_RT);
-//            nrfFlushTxFifo();
-//            putchar('I');
-//            putchar('R');
-//        }
-//    }
-//}
+void ExtiPortCIRQHandler(void) __interrupt(3)
+{
+    // if PA1
+    if ( 0 == (PA_IDR & 0x02)) // Active low
+    {
+        uint8_t status = nrfGetStatusRegister();
+        if ( status & STATUS_RX_DR)
+        {
+            nrfSetRegister(REG_STATUS, STATUS_RX_DR);
+            dataReceived = 1;
+        }
+    }
+}
 
 #ifdef USE_FULL_ASSERT
 
