@@ -79,14 +79,16 @@ int main()
     }
     printf("CONNECTED\n");
     enableInterrupts();
+    nrfSetFixedDataSize(TRANSFER_SIZE);
+    nrfFlushRxFifo();
     nrfSetReceiveMode();
     while( 1 )
     {
         if (dataReceived) {
             dataReceived = 0;
-            putchar('R');
-            putchar('C');
-            putchar('\n');
+            nrfReadData(data, TRANSFER_SIZE);
+            printf("%s\n", data);
+
         }
         if( flagHalfSecond )
         {

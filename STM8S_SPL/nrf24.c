@@ -121,9 +121,8 @@ void initNrf()
     // of 32 bytes, it can be between 1-32
     // it is not required at TX Side
     // It is only required at RX Side
-#ifdef RECEIVER
-    nrfSetRegister(REG_RX_PW_P0, 32);
-#endif
+    //nrfSetRegister(REG_RX_PW_P0, 32);
+
 
     // enable transmission
     NRF24L01P_RaiseCE();
@@ -205,4 +204,44 @@ void nrfSetTransmitMode()
     uint8_t theConfig = nrfGetRegister(REG_CONFIG);
     theConfig &= ~CONFIG_PRIM_RX;
     nrfSetRegister(REG_CONFIG, theConfig);
+}
+
+void nrfSetFixedDataSize(uint8_t dataSize)
+{
+    if (dataSize > 32) dataSize = 32;
+    nrfSetRegister(REG_RX_PW_P0, dataSize);
+}
+
+int8_t nrfReadData( uint8_t *data, uint8_t count)
+{
+    CS_LOW();
+    spiWriteRead(SPI_CMD_R_RX_PL_WID);
+    uint8_t rxPayloadWidth = spiWriteRead(SPI_CMD_NOP);
+    CS_HIGH();
+
+    if ( rxPayloadWidth > RX_FIFO_SIZE )
+    {
+        nrfFlushRxFifo();
+    }
+    else
+    {
+        if ( rxPayloadWidth < count ) count = rxPayloadWidth;
+        CS_LOW();
+        spiWriteRead(SPI_CMD_RD_RX_PAYLOAD);
+        for ( int i = 0; i < count; i++ )
+        {
+            *data++ = spiWriteRead(SPI_CMD_NOP);
+        }
+        CS_HIGH();
+        return count;
+    }
+    return -1;
+}
+
+void nrfFlushRxFifo()
+{
+    CS_LOW();
+    spiWriteRead(SPI_CMD_FLUSH_RX);
+    spiWriteRead(SPI_CMD_NOP);
+    CS_HIGH();
 }
