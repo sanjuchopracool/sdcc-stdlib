@@ -58,6 +58,9 @@
 // drop CE to disable RF Transmission
 #define NRF24L01P_DropCE()  PA_ODR &= 0xFB
 
+#define REG_RX_ADDR_P0      0x0A
+#define REG_TX_ADDR         0x10
+uint8_t DEFAULT_ADDRESS[5] =  {0xA8, 0xD7, 0xF9, 0xEF, 0x00};
 ///////////////////////////////////////////////////////////////////////////////
 ///         TODO:
 ///         Add CE Code
@@ -94,6 +97,13 @@ void initNrf()
                 STATUS_TX_DS|
                 STATUS_RX_DR);   // Clear any pending interrupts
 
+    // set 250KBPS DATA RATE
+    // MAX POWER
+    nrfSetRegister(REG_RF_SETUP,
+                   RF_250KBPS|RF_MAX_POWER);
+
+    // BOTH REQUIRED FOR AUTO ACKNOWLEDGEMENT
+    nrfSetRxAddress(0);
 #ifdef RECEIVER
     nrfSetRegister(REG_CONFIG,
                 CONFIG_EN_CRC |
@@ -104,18 +114,10 @@ void initNrf()
                 CONFIG_EN_CRC |
                 CONFIG_MASK_RX_DR |
                 CONFIG_PWR_UP);
+    nrfSetTxAddress(0);
 #endif
 
-    // set 250KBPS DATA RATE
-    // MAX POWER
-    nrfSetRegister(REG_RF_SETUP,
-                   RF_250KBPS|RF_MAX_POWER);
-    // Enable AutoAcknowledgement for pipe 0
-    nrfSetRegister(REG_EN_AA, 0x01);
 
-    // enable only first rx pipe
-    // we want only one to one communication
-    nrfSetRegister( REG_EN_RXADDR, 0x01 );
 
     // set transfer size
     // of 32 bytes, it can be between 1-32
@@ -169,7 +171,7 @@ uint8_t nrfWrite(uint8_t *data, uint8_t count)
 
     CS_LOW();
     spiWriteRead(SPI_CMD_WR_TX_PAYLOAD);
-    for (i = 0; i < count; i++ )
+    for (i = 0; i < count; ++i )
         spiWriteRead(*data++);
     CS_HIGH();
     return count;
@@ -197,6 +199,11 @@ void nrfSetReceiveMode()
     uint8_t theConfig = nrfGetRegister(REG_CONFIG);
     theConfig |= CONFIG_PRIM_RX;
     nrfSetRegister(REG_CONFIG, theConfig);
+    // Enable AutoAcknowledgement for pipe 0
+    nrfSetRegister( REG_EN_RXADDR, 0x01 );
+    // enable only first rx pipe
+    // we want only one to one communication
+    nrfSetRegister(REG_EN_AA, 0x01);
 }
 
 void nrfSetTransmitMode()
@@ -204,6 +211,9 @@ void nrfSetTransmitMode()
     uint8_t theConfig = nrfGetRegister(REG_CONFIG);
     theConfig &= ~CONFIG_PRIM_RX;
     nrfSetRegister(REG_CONFIG, theConfig);
+    // Enable AutoAcknowledgement for pipe 0
+    nrfSetRegister( REG_EN_RXADDR, 0x01 );
+    nrfSetRegister(REG_SETUP_RETR, 0xFF);
 }
 
 void nrfSetFixedDataSize(uint8_t dataSize)
@@ -228,7 +238,7 @@ int8_t nrfReadData( uint8_t *data, uint8_t count)
         if ( rxPayloadWidth < count ) count = rxPayloadWidth;
         CS_LOW();
         spiWriteRead(SPI_CMD_RD_RX_PAYLOAD);
-        for ( int i = 0; i < count; i++ )
+        for ( int i = 0; i < count; ++i )
         {
             *data++ = spiWriteRead(SPI_CMD_NOP);
         }
@@ -245,3 +255,24 @@ void nrfFlushRxFifo()
     spiWriteRead(SPI_CMD_NOP);
     CS_HIGH();
 }
+
+void nrfSetRxAddress(uint8_t address)
+{
+    DEFAULT_ADDRESS[4] = address;
+    CS_LOW();
+    spiWriteRead(SPI_CMD_WR_REG | REG_RX_ADDR_P0);
+    for (uint8_t i = 0; i < 5; ++i )
+        spiWriteRead(DEFAULT_ADDRESS[i]);
+    CS_HIGH();
+}
+
+void nrfSetTxAddress(uint8_t address)
+{
+    DEFAULT_ADDRESS[4] = address;
+    CS_LOW();
+    spiWriteRead(SPI_CMD_WR_REG | REG_TX_ADDR);
+    for (uint8_t i = 0; i < 5; ++i )
+        spiWriteRead(DEFAULT_ADDRESS[i]);
+    CS_HIGH();
+}
+

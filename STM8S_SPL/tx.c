@@ -72,11 +72,13 @@ int main()
     // timer 4 provides 2 ms interrupt, no way to increase delay, with 16MHz
     setUpTimer4();
     initNrf();
-    printf("CHIP ");
+    printf("TX ");
     if (!nrfIsConnected()) {
         printf("NOT ");
     }
     printf("CONNECTED\n");
+    nrfFlushTxFifo();
+    nrfSetTransmitMode();
     enableInterrupts();
     while( 1 )
     {
