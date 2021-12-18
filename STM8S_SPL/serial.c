@@ -20,7 +20,7 @@ void setUpSerial()
 {
     UART1_CR2 = UART_CR2_TEN; //enable tx
 
-    // 9600 baud
-    UART1_BRR2 = 0x03;
-    UART1_BRR1 = 0x68;
+    // 115200 baud
+    UART1_BRR2 = 0x0B;
+    UART1_BRR1 = 0x08;
 }

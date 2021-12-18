@@ -21,6 +21,7 @@ print.c
 print.h
 readme.txt
 readme.txt
+rx.c
 serial.c
 serial.h
 spi.c
@@ -46,3 +47,4 @@ serial.h
 stm8s_it.h
 stm8s_it.c
 stm8s_conf.h
+tx.c

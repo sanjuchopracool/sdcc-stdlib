@@ -10,7 +10,7 @@
 void setUpTimer4()
 {
     // main clock 16 MHZ
-    // prescaler 128 =  (2^PSCR)
+    // prescaler 128 =  (2^PSCR)  (its maximum value possible for prescaler)
     // timer clock 125KHz
     // Counter 250
     // interrupt at every 2ms
