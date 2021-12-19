@@ -8,6 +8,7 @@
 #include "nrf24.h"
 #include "pwm.h"
 #include "led.h"
+#include "fhss.h"
 
 ///
 /// \brief setUpClock sets clock to internal
@@ -22,10 +23,94 @@ void setUpClock()
     while( ( CLK_SWCR & 0x01 ) != 0 );
 }
 
-
-volatile uint8_t tim4Counter;
-volatile uint8_t flagHalfSecond;
+/**********************************************************************************************************/
+/********************************** DATA RECEIVED INTERRUPT************************************************/
+/**********************************************************************************************************/
 volatile uint8_t dataReceived;
+/**********************************************************************************************************/
+/********************************** TIMER 4 , CLOCK , LED BLINK********************************************/
+/**********************************************************************************************************/
+
+volatile uint8_t ledToggleFlag;
+volatile uint8_t  tim4Counter;
+volatile uint8_t ledBlinkSpeed = 250;
+/**********************************************************************************************************/
+/**********************************************************************************************************/
+/**********************************************************************************************************/
+
+int main()
+{
+    uint8_t blinkLED = 1;
+    uint8_t bindingAddress = 0;
+    setUpClock();
+    setUpSerial();
+    initLED();
+    // timer 4 provides 2 ms interrupt, no way to increase delay, with 16MHz
+    setUpTimer4();
+    initNrf();
+    printf("RX ");
+    if (!nrfIsConnected()) {
+        printf("NOT ");
+    }
+    printf("CONNECTED\n");
+    enableInterrupts();
+    nrfSetFixedDataSize(sizeof(data_packet));
+    nrfFlushRxFifo();
+
+    // TODO read binding address
+    if (bindingAddress) {
+        nrfSetBindingAddress(bindingAddress);
+    } else {
+        // Blink faster for binding
+        ledBlinkSpeed = 50;
+    }
+
+    nrfSetReceiveMode();
+    while( 1 )
+    {
+        if (dataReceived) {
+            dataReceived = 0;
+            nrfReadData((uint8_t*)data_packet, sizeof(data_packet));
+            if (bindingAddress) {
+                // CONSUME DATA
+                printf("%s\n", (const char*)data_packet);
+            } else {
+                bindingAddress = data_packet.switches;
+                printf("BIND ADDRESS %d\n", (int32_t)bindingAddress);
+                nrfSetBindingAddress(bindingAddress);
+                // TODO SAVE BINDING ADDREES
+                ledBlinkSpeed = 250;
+            }
+
+        }
+        if( blinkLED && ledToggleFlag )
+        {
+            ledToggleFlag = 0;
+            toggleLED();
+        }
+    }
+}
+
+
+/**********************************************************************************************************/
+/********************************** DATA RECEIVED INTERRUPT************************************************/
+/**********************************************************************************************************/
+void ExtiPortCIRQHandler(void) __interrupt(3)
+{
+    // if PA1
+    if ( 0 == (PA_IDR & 0x02)) // Active low
+    {
+        uint8_t status = nrfGetStatusRegister();
+        if ( status & STATUS_RX_DR)
+        {
+            nrfSetRegister(REG_STATUS, STATUS_RX_DR);
+            dataReceived = 1;
+        }
+    }
+}
+/**********************************************************************************************************/
+/********************************** TIMER 4 , CLOCK , LED BLINK********************************************/
+/**********************************************************************************************************/
 
 //volatile unsigned long millis;
 void Timer4UpdateIRQHandler(void) __interrupt(23)
@@ -38,10 +123,10 @@ void Timer4UpdateIRQHandler(void) __interrupt(23)
     //        flag50ms = 1;
 
 
-    if(tim4Counter == 250 )
+    if(tim4Counter == ledBlinkSpeed )
     {
         tim4Counter = 0;
-        flagHalfSecond = 1;
+        ledToggleFlag = 1;
     }
 
     TIM4_SR = 0x00;
@@ -57,60 +142,8 @@ void Timer4UpdateIRQHandler(void) __interrupt(23)
 //    unsigned long offset = millis + inMs;
 //    while( offset >= millis );
 //}
-
-// MACROS
-
-#define TRANSFER_SIZE 32
-///////////////////////////////////////////////////////////////////////////////
-uint8_t data[TRANSFER_SIZE] = "";
-
-///////////////////////////////////////////////////////////////////////////////
-int main()
-{
-    setUpClock();
-    setUpSerial();
-    initLED();
-    // timer 4 provides 2 ms interrupt, no way to increase delay, with 16MHz
-    setUpTimer4();
-    initNrf();
-    printf("RX ");
-    if (!nrfIsConnected()) {
-        printf("NOT ");
-    }
-    printf("CONNECTED\n");
-    enableInterrupts();
-    nrfSetFixedDataSize(TRANSFER_SIZE);
-    nrfFlushRxFifo();
-    nrfSetReceiveMode();
-    while( 1 )
-    {
-        if (dataReceived) {
-            dataReceived = 0;
-            nrfReadData(data, TRANSFER_SIZE);
-            printf("%s\n", data);
-
-        }
-        if( flagHalfSecond )
-        {
-            flagHalfSecond = 0;
-            toggleLED();
-        }
-    }
-}
-
-void ExtiPortCIRQHandler(void) __interrupt(3)
-{
-    // if PA1
-    if ( 0 == (PA_IDR & 0x02)) // Active low
-    {
-        uint8_t status = nrfGetStatusRegister();
-        if ( status & STATUS_RX_DR)
-        {
-            nrfSetRegister(REG_STATUS, STATUS_RX_DR);
-            dataReceived = 1;
-        }
-    }
-}
+/**********************************************************************************************************/
+/**********************************************************************************************************/
 
 #ifdef USE_FULL_ASSERT
 

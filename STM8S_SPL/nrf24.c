@@ -276,3 +276,10 @@ void nrfSetTxAddress(uint8_t address)
     CS_HIGH();
 }
 
+
+void nrfSetBindingAddress(uint8_t address)
+{
+    nrfSetTxAddress(address);
+    nrfSetRxAddress(address);
+    // TODO disable acknowlegement and interrupt ??
+}

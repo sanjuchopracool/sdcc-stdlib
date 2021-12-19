@@ -8,6 +8,7 @@
 #include "nrf24.h"
 #include "pwm.h"
 #include "led.h"
+#include "fhss.h"
 
 ///
 /// \brief setUpClock sets clock to internal
@@ -22,9 +23,42 @@ void setUpClock()
     while( ( CLK_SWCR & 0x01 ) != 0 );
 }
 
+/**********************************************************************************************************/
+/********************************** DATA TRANSMIT INTERRUPT************************************************/
+/**********************************************************************************************************/
+volatile uint8_t packetSent = 0;
+void ExtiPortCIRQHandler(void) __interrupt(3)
+{
+    // if PA1
+    if ( 0 == (PA_IDR & 0x02)) // Active low
+    {
+        uint8_t status = nrfGetStatusRegister();
+        if ( status & STATUS_TX_DS)
+        {
+            nrfSetRegister(REG_STATUS, STATUS_TX_DS);
+            packetSent = 1;
+            putchar('I');
+            putchar('T');
+            putchar('\n');
+        }
+        else if ( status & STATUS_MAX_RT)
+        {
+            nrfSetRegister(REG_STATUS, STATUS_MAX_RT);
+            nrfFlushTxFifo();
+            putchar('I');
+            putchar('R');
+            putchar('\n');
+        }
+    }
+}
 
-volatile uint8_t tim4Counter;
-volatile uint8_t flagHalfSecond;
+/**********************************************************************************************************/
+/********************************** TIMER 4 , CLOCK , LED BLINK********************************************/
+/**********************************************************************************************************/
+
+volatile uint8_t ledToggleFlag;
+volatile uint8_t  tim4Counter;
+volatile uint8_t ledBlinkSpeed = 250;
 
 //volatile unsigned long millis;
 void Timer4UpdateIRQHandler(void) __interrupt(23)
@@ -37,10 +71,10 @@ void Timer4UpdateIRQHandler(void) __interrupt(23)
     //        flag50ms = 1;
 
 
-    if(tim4Counter == 250 )
+    if(tim4Counter == ledBlinkSpeed )
     {
         tim4Counter = 0;
-        flagHalfSecond = 1;
+        ledToggleFlag = 1;
     }
 
     TIM4_SR = 0x00;
@@ -56,16 +90,18 @@ void Timer4UpdateIRQHandler(void) __interrupt(23)
 //    unsigned long offset = millis + inMs;
 //    while( offset >= millis );
 //}
+/**********************************************************************************************************/
+/**********************************************************************************************************/
+/**********************************************************************************************************/
 
-// MACROS
+#define TRANSFER_SIZE 9
+uint8_t data[TRANSFER_SIZE] = "Hello";
 
-#define TRANSFER_SIZE 32
-///////////////////////////////////////////////////////////////////////////////
-uint8_t data[TRANSFER_SIZE] = "Hello !! How are you man?";
-
-///////////////////////////////////////////////////////////////////////////////
 int main()
 {
+    uint8_t blinkLED = 1;
+    uint8_t bindingAddress = 0;
+    uint8_t newBindingAddress = 0xFF;
     setUpClock();
     setUpSerial();
     initLED();
@@ -78,39 +114,41 @@ int main()
     }
     printf("CONNECTED\n");
     nrfFlushTxFifo();
+    if (bindingAddress) {
+        printf("SETTIING BIND ADDRESS %d\n", (int32_t)bindingAddress);
+        nrfSetBindingAddress(bindingAddress);
+    } else {
+        // it would bind
+        ledBlinkSpeed = 50;
+    }
     nrfSetTransmitMode();
     enableInterrupts();
     while( 1 )
     {
-        if( flagHalfSecond )
+        if(ledToggleFlag )
         {
-            flagHalfSecond = 0;
-            toggleLED();
-            nrfWrite(data, TRANSFER_SIZE);
-        }
-    }
-}
+            ledToggleFlag = 0;
+            if (blinkLED)
+                toggleLED();
 
-void ExtiPortCIRQHandler(void) __interrupt(3)
-{
-    // if PA1
-    if ( 0 == (PA_IDR & 0x02)) // Active low
-    {
-        uint8_t status = nrfGetStatusRegister();
-        if ( status & STATUS_TX_DS)
-        {
-            nrfSetRegister(REG_STATUS, STATUS_TX_DS);
-            putchar('I');
-            putchar('T');
-            putchar('\n');
-        }
-        else if ( status & STATUS_MAX_RT)
-        {
-            nrfSetRegister(REG_STATUS, STATUS_MAX_RT);
-            nrfFlushTxFifo();
-            putchar('I');
-            putchar('R');
-            putchar('\n');
+            if (bindingAddress) {
+                // send normal data
+                nrfWrite(data, TRANSFER_SIZE);
+            } else {
+                if (packetSent) {
+                    packetSent = 0;
+                    bindingAddress = newBindingAddress;
+                    printf("SETTIING BIND ADDRESS %d\n", (int32_t)bindingAddress);
+                    nrfSetBindingAddress(bindingAddress);
+                    ledBlinkSpeed = 250;
+                    // TODO save in eeprom
+                } else {
+                    // keep sending binding address
+                    data_packet.switches = newBindingAddress;
+                    printf("BINDING %d\n", (int32_t)newBindingAddress);
+                    nrfWrite((uint8_t*)data_packet, sizeof(data_packet));
+                }
+            }
         }
     }
 }

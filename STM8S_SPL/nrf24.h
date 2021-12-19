@@ -31,4 +31,5 @@ void nrfSetFixedDataSize(uint8_t dataSize);
 int8_t nrfReadData( uint8_t *data, uint8_t count);
 void nrfSetTxAddress(uint8_t address);
 void nrfSetRxAddress(uint8_t address);
+void nrfSetBindingAddress(uint8_t address);
 #endif // NRF24_H
