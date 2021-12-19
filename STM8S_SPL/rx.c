@@ -129,7 +129,7 @@ int main()
             }
 
         }
-        else if ((timerCounter - lastRxCounter) > (fhssTransmitSpeed + 5))
+        else if ((timerCounter - lastRxCounter) > (fhssTransmitSpeed + 1))
         {
             fhssOn = 0;
             lastRxCounter = timerCounter;

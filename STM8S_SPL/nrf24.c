@@ -55,6 +55,9 @@
 #define CS_LOW()     PA_ODR &= (~(0x08))
 #define CS_HIGH()    PA_ODR |= 0x08;
 
+#define CE_LOW()     PA_ODR &= (~(0x04))
+#define CE_HIGH()    PA_ODR |= 0x04;
+
 // raise CE to enable the RF transmission PA2
 #define NRF24L01P_RaiseCE() PA_ODR |= 0x04
 // drop CE to disable RF Transmission
@@ -176,6 +179,10 @@ uint8_t nrfWrite(uint8_t *data, uint8_t count)
     for (i = 0; i < count; ++i )
         spiWriteRead(*data++);
     CS_HIGH();
+
+    CE_HIGH();
+    while (!(nrfGetStatusRegister() | (STATUS_TX_DS | STATUS_MAX_RT)));
+    CE_LOW();
     return count;
 }
 

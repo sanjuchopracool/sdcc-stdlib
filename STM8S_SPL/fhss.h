@@ -3,10 +3,10 @@
 
 #include "common.h"
 
-// we have 7 bit to set frequency, 0-128
-uint8_t fhssFreq[] = {63,37,101,90,10,36,98,62,115,50};//,14,59,107,120,38,97,70,41,22,35};
-uint16_t freqChangeSpeed = 40;
-uint32_t fhssTransmitSpeed = 50;
+// we have 7 bit to set frequency, 0-125
+uint8_t fhssFreq[] = {107,92,67,18,62,21,59,0,115,52,7,73,120,88,42,27,99,38,48,13,82,10,123,71,31};
+uint16_t freqChangeSpeed = 8;
+uint32_t fhssTransmitSpeed = 10;
 struct  DataPacket {
     uint16_t a;
     uint16_t e;
