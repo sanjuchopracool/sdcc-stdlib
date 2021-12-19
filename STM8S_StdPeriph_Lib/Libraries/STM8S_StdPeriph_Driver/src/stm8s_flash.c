@@ -167,7 +167,7 @@ void FLASH_EraseByte(uint32_t Address)
   assert_param(IS_FLASH_ADDRESS_OK(Address));
   
   /* Erase byte */
-  *(PointerAttr uint8_t*) (MemoryAddressCast)Address = FLASH_CLEAR_BYTE; 
+  *(PointerAttr uint8_t*) (MemoryAddressCast)Address = FLASH_CLEAR_BYTE;
 }
 
 /**

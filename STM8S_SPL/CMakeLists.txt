@@ -15,6 +15,7 @@ set(SOURCES
     timer4.c
     spi.c
     nrf24.c
+    utility.c
 #    pwm.c
 #    ${CMAKE_SOURCE_DIR}/../STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_tim2.c
     )
@@ -38,6 +39,7 @@ set(SOURCES_TX
     timer4.c
     spi.c
     nrf24.c
+    utility.c
 #    pwm.c
 #    ${CMAKE_SOURCE_DIR}/../STM8S_StdPeriph_Lib/Libraries/STM8S_StdPeriph_Driver/src/stm8s_tim2.c
     )

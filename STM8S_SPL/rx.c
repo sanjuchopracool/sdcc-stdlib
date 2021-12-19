@@ -8,6 +8,7 @@
 #include "nrf24.h"
 #include "pwm.h"
 #include "led.h"
+#include "utility.h"
 #include "fhss.h"
 
 ///
@@ -57,7 +58,8 @@ int main()
     nrfSetFixedDataSize(sizeof(data_packet));
     nrfFlushRxFifo();
 
-    // TODO read binding address
+    bindingAddress = readEEPROMAddress();
+    printf("EEPROM ADDRESS %d\n", (int32_t)bindingAddress);
     if (bindingAddress) {
         nrfSetBindingAddress(bindingAddress);
     } else {
@@ -76,9 +78,9 @@ int main()
                 printf("%s\n", (const char*)data_packet);
             } else {
                 bindingAddress = data_packet.switches;
-                printf("BIND ADDRESS %d\n", (int32_t)bindingAddress);
+                printf("WRITE BIND ADDRESS %d\n", (int32_t)bindingAddress);
                 nrfSetBindingAddress(bindingAddress);
-                // TODO SAVE BINDING ADDREES
+                writeEEPROMAddress(bindingAddress);
                 ledBlinkSpeed = 250;
             }
 

@@ -100,7 +100,7 @@ uint8_t data[TRANSFER_SIZE] = "Hello";
 int main()
 {
     uint8_t blinkLED = 1;
-    uint8_t bindingAddress = 0;
+    uint8_t bindingAddress = 0xFF;
     uint8_t newBindingAddress = 0xFF;
     setUpClock();
     setUpSerial();
