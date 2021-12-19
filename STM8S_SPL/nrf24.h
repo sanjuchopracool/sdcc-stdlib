@@ -16,6 +16,7 @@
 void initNrf();
 uint8_t nrfGetRegister(uint8_t inReg);
 uint8_t nrfGetStatusRegister();
+uint8_t nrfIsDataReady();
 void nrfSetRegister( uint8_t inReg, uint8_t inRegData );
 uint8_t nrfWrite(uint8_t *data, uint8_t count);
 void nrfFlushTxFifo();
@@ -32,4 +33,5 @@ int8_t nrfReadData( uint8_t *data, uint8_t count);
 void nrfSetTxAddress(uint8_t address);
 void nrfSetRxAddress(uint8_t address);
 void nrfSetBindingAddress(uint8_t address);
+void nrfSetFrequency(int8_t freq); // must be less <= 128
 #endif // NRF24_H

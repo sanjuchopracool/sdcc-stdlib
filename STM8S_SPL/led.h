@@ -20,12 +20,12 @@ void toggleLED()
     PB_ODR ^= 0x20;
 }
 
-void onLED()
+void offLED()
 {
     PB_ODR |= 0x20;
 }
 
-void offLED()
+void onLED()
 {
     PB_ODR &= 0xDF;
 }

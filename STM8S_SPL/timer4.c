@@ -20,3 +20,8 @@ void setUpTimer4()
     TIM4_IER = 0x01;
     TIM4_CR1 = 0x01;
 }
+
+void resetTim4Counter()
+{
+    TIM4_CNTR = 0x00;
+}

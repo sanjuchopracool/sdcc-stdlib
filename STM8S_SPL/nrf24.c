@@ -35,7 +35,9 @@
 #define REG_SETUP_RETR            0x04
 #define REG_RX_PW_P0              0x11
 #define REG_SETUP_AW              0x03
+#define REG_RF_CH                 0x05
 #define REG_RF_SETUP              0x06
+#define REG_FIFO_STATUS           0x17
 
 #define RF_250KBPS                  (1<<5)
 #define RF_MAX_POWER                (3<<1)
@@ -200,10 +202,10 @@ void nrfSetReceiveMode()
     theConfig |= CONFIG_PRIM_RX;
     nrfSetRegister(REG_CONFIG, theConfig);
     // Enable AutoAcknowledgement for pipe 0
-    nrfSetRegister( REG_EN_RXADDR, 0x01 );
+    nrfSetRegister(REG_EN_AA, 0x01);
     // enable only first rx pipe
     // we want only one to one communication
-    nrfSetRegister(REG_EN_AA, 0x01);
+    nrfSetRegister( REG_EN_RXADDR, 0x01 );
 }
 
 void nrfSetTransmitMode()
@@ -281,5 +283,23 @@ void nrfSetBindingAddress(uint8_t address)
 {
     nrfSetTxAddress(address);
     nrfSetRxAddress(address);
-    // TODO disable acknowlegement and interrupt ??
+    // disable acknowledgement
+//    nrfSetRegister(REG_EN_AA, 0x00);
+//    // retry only 1 time
+//    nrfSetRegister(REG_SETUP_RETR, 0x00);
+////    // mask all interrupts
+//    nrfSetRegister(REG_CONFIG,
+//                CONFIG_EN_CRC |
+//                CONFIG_MASK_TX_DS | CONFIG_MASK_MAX_RT | CONFIG_MASK_RX_DR |
+//                CONFIG_PWR_UP);
+}
+
+void nrfSetFrequency(int8_t freq)
+{
+    nrfSetRegister(REG_RF_CH, freq);
+}
+
+uint8_t nrfIsDataReady()
+{
+    return !(nrfGetRegister(REG_FIFO_STATUS) & 0x01);
 }

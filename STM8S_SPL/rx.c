@@ -32,9 +32,8 @@ volatile uint8_t dataReceived;
 /********************************** TIMER 4 , CLOCK , LED BLINK********************************************/
 /**********************************************************************************************************/
 
-volatile uint8_t ledToggleFlag;
-volatile uint8_t  tim4Counter;
-volatile uint8_t ledBlinkSpeed = 250;
+volatile uint8_t  fired = 0;
+volatile uint32_t timerCounter = 0;
 /**********************************************************************************************************/
 /**********************************************************************************************************/
 /**********************************************************************************************************/
@@ -43,6 +42,7 @@ int main()
 {
     uint8_t blinkLED = 1;
     uint8_t bindingAddress = 0;
+    uint8_t ledBlinkSpeed = 250;
     setUpClock();
     setUpSerial();
     initLED();
@@ -62,16 +62,58 @@ int main()
     printf("EEPROM ADDRESS %d\n", (int32_t)bindingAddress);
     if (bindingAddress) {
         nrfSetBindingAddress(bindingAddress);
+        nrfSetFrequency(fhssFreq[0]);
+        blinkLED = 0;
+        onLED();
     } else {
         // Blink faster for binding
         ledBlinkSpeed = 50;
     }
 
     nrfSetReceiveMode();
+    uint8_t firedCount = 0;
+    uint8_t blinkCounter = 0;
+    uint8_t fhssFreqSize = sizeof(fhssFreq);
+    uint8_t currentFhssFreq = 0;
+    uint8_t fhssOn = 0;
+    uint32_t lastRxCounter = 0;
+
     while( 1 )
     {
-        if (dataReceived) {
+        // fired at every 2ms
+        if (fired) {
+            fired = 0;
+            firedCount++;
+            timerCounter++;
+
+        }
+
+        if (firedCount >= 25)
+        {
+            firedCount = 0;
+        }
+        else if(firedCount == 20) //every 40 ms
+        {
+//            if(bindingAddress && fhssOn) {
+//                putchar('N');
+//                ++currentFhssFreq;
+//                if (currentFhssFreq >= fhssFreqSize)
+//                    currentFhssFreq = 0;
+//                nrfSetFrequency(fhssFreq[currentFhssFreq]);
+//            } else {
+//                putchar('S');
+//            }
+//            putchar('F');
+//            putchar('\n');
+        }
+
+        if (dataReceived/* && nrfIsDataReady()*/) {
+//            resetTim4Counter();
             dataReceived = 0;
+//            firedCount = 0;
+//            fhssOn = 1;
+            lastRxCounter = timerCounter;
+            printf("%d\n", (int32_t)currentFhssFreq);
             nrfReadData((uint8_t*)data_packet, sizeof(data_packet));
             if (bindingAddress) {
                 // CONSUME DATA
@@ -80,16 +122,28 @@ int main()
                 bindingAddress = data_packet.switches;
                 printf("WRITE BIND ADDRESS %d\n", (int32_t)bindingAddress);
                 nrfSetBindingAddress(bindingAddress);
+                nrfSetFrequency(fhssFreq[0]);
                 writeEEPROMAddress(bindingAddress);
-                ledBlinkSpeed = 250;
+                blinkLED = 0;
+                onLED();
             }
 
         }
-        if( blinkLED && ledToggleFlag )
-        {
-            ledToggleFlag = 0;
-            toggleLED();
-        }
+//        else if ((timerCounter - lastRxCounter) > 30)
+//        {
+//            fhssOn = 0;
+//            lastRxCounter = timerCounter;
+//            ++currentFhssFreq;
+//            if (currentFhssFreq >= fhssFreqSize)
+//                currentFhssFreq = 0;
+//            nrfSetFrequency(fhssFreq[currentFhssFreq]);
+//        }
+
+//        if( blinkLED && (blinkCounter >= ledBlinkSpeed) )
+//        {
+//            blinkCounter = 0;
+//            toggleLED();
+//        }
     }
 }
 
@@ -117,20 +171,8 @@ void ExtiPortCIRQHandler(void) __interrupt(3)
 //volatile unsigned long millis;
 void Timer4UpdateIRQHandler(void) __interrupt(23)
 {
-    tim4Counter++;
-    //    millis++;
-
-    // Set other timout things here
-    //    if (0 == (tim4Counter % 25))
-    //        flag50ms = 1;
-
-
-    if(tim4Counter == ledBlinkSpeed )
-    {
-        tim4Counter = 0;
-        ledToggleFlag = 1;
-    }
-
+    fired = 1;
+//    timerCounter++;
     TIM4_SR = 0x00;
 }
 

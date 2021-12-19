@@ -32,23 +32,21 @@ void ExtiPortCIRQHandler(void) __interrupt(3)
     // if PA1
     if ( 0 == (PA_IDR & 0x02)) // Active low
     {
+        putchar('I');
         uint8_t status = nrfGetStatusRegister();
         if ( status & STATUS_TX_DS)
         {
             nrfSetRegister(REG_STATUS, STATUS_TX_DS);
             packetSent = 1;
-            putchar('I');
             putchar('T');
-            putchar('\n');
         }
         else if ( status & STATUS_MAX_RT)
         {
             nrfSetRegister(REG_STATUS, STATUS_MAX_RT);
             nrfFlushTxFifo();
-            putchar('I');
             putchar('R');
-            putchar('\n');
         }
+        putchar('\n');
     }
 }
 
@@ -56,27 +54,12 @@ void ExtiPortCIRQHandler(void) __interrupt(3)
 /********************************** TIMER 4 , CLOCK , LED BLINK********************************************/
 /**********************************************************************************************************/
 
-volatile uint8_t ledToggleFlag;
-volatile uint8_t  tim4Counter;
-volatile uint8_t ledBlinkSpeed = 250;
+volatile uint8_t fired = 0;
 
 //volatile unsigned long millis;
 void Timer4UpdateIRQHandler(void) __interrupt(23)
 {
-    tim4Counter++;
-    //    millis++;
-
-    // Set other timout things here
-    //    if (0 == (tim4Counter % 25))
-    //        flag50ms = 1;
-
-
-    if(tim4Counter == ledBlinkSpeed )
-    {
-        tim4Counter = 0;
-        ledToggleFlag = 1;
-    }
-
+    fired = 1;
     TIM4_SR = 0x00;
 }
 
@@ -117,22 +100,48 @@ int main()
     if (bindingAddress) {
         printf("SETTIING BIND ADDRESS %d\n", (int32_t)bindingAddress);
         nrfSetBindingAddress(bindingAddress);
-    } else {
-        // it would bind
-        ledBlinkSpeed = 50;
+        nrfSetFrequency(fhssFreq[0]);
+        blinkLED = 0;
+        onLED();
     }
+
     nrfSetTransmitMode();
     enableInterrupts();
+
+    uint8_t firedCount = 0;
+    uint8_t blinkCounter = 0;
+    uint8_t fhssFreqSize = sizeof(fhssFreq);
+    uint8_t currentFhssFreq = 0;
+    printf("FHSS_FREQ_SIZE %d\n", (int32_t)fhssFreqSize);
     while( 1 )
     {
-        if(ledToggleFlag )
+        // fired at every 2ms
+        if (fired) {
+            fired = 0;
+            firedCount++;
+//            blinkCounter++;
+        }
+        if(firedCount == 20) // every 40ms
         {
-            ledToggleFlag = 0;
-            if (blinkLED)
-                toggleLED();
-
+//            if(bindingAddress) {
+//                //printf("%d\n", (int32_t)currentFhssFreq);
+//                putchar('N');
+//                putchar('\n');
+//                nrfSetFrequency(fhssFreq[currentFhssFreq++]);
+//                if (currentFhssFreq >= fhssFreqSize)
+//                    currentFhssFreq = 0;
+//            } else {
+//                putchar('S');
+//                putchar('F');
+//                putchar('\n');
+//            }
+        }
+        else if (firedCount == 25)
+        {
             if (bindingAddress) {
                 // send normal data
+                putchar('T');
+                putchar('\n');
                 nrfWrite(data, TRANSFER_SIZE);
             } else {
                 if (packetSent) {
@@ -140,8 +149,9 @@ int main()
                     bindingAddress = newBindingAddress;
                     printf("SETTIING BIND ADDRESS %d\n", (int32_t)bindingAddress);
                     nrfSetBindingAddress(bindingAddress);
-                    ledBlinkSpeed = 250;
                     // TODO save in eeprom
+                    blinkLED = 0;
+                    onLED();
                 } else {
                     // keep sending binding address
                     data_packet.switches = newBindingAddress;
@@ -149,7 +159,14 @@ int main()
                     nrfWrite((uint8_t*)data_packet, sizeof(data_packet));
                 }
             }
+            firedCount = 0;
         }
+
+//        if (blinkLED && (blinkCounter == 50))
+//        {
+//            toggleLED();
+//            blinkCounter = 0;
+//        }
     }
 }
 
