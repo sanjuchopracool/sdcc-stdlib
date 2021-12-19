@@ -123,14 +123,14 @@ int main()
         }
         if(firedCount == 20) // every 40ms
         {
-//            if(bindingAddress) {
-//                //printf("%d\n", (int32_t)currentFhssFreq);
+            if(bindingAddress) {
+                //printf("%d\n", (int32_t)currentFhssFreq);
 //                putchar('N');
 //                putchar('\n');
-//                nrfSetFrequency(fhssFreq[currentFhssFreq++]);
-//                if (currentFhssFreq >= fhssFreqSize)
-//                    currentFhssFreq = 0;
-//            } else {
+                nrfSetFrequency(fhssFreq[currentFhssFreq++]);
+                if (currentFhssFreq >= fhssFreqSize)
+                    currentFhssFreq = 0;
+            } // else {
 //                putchar('S');
 //                putchar('F');
 //                putchar('\n');

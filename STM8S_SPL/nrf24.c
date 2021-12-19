@@ -285,13 +285,17 @@ void nrfSetBindingAddress(uint8_t address)
     nrfSetRxAddress(address);
     // disable acknowledgement
 //    nrfSetRegister(REG_EN_AA, 0x00);
-//    // retry only 1 time
-//    nrfSetRegister(REG_SETUP_RETR, 0x00);
-////    // mask all interrupts
+    // retry only 1 time
+    nrfSetRegister(REG_SETUP_RETR, 0x00);
+//    // mask all interrupts
 //    nrfSetRegister(REG_CONFIG,
 //                CONFIG_EN_CRC |
 //                CONFIG_MASK_TX_DS | CONFIG_MASK_MAX_RT | CONFIG_MASK_RX_DR |
 //                CONFIG_PWR_UP);
+//    nrfSetRegister(REG_STATUS,
+//                STATUS_MAX_RT|
+//                STATUS_TX_DS|
+//                STATUS_RX_DR);   // Clear any pending interrupts
 }
 
 void nrfSetFrequency(int8_t freq)

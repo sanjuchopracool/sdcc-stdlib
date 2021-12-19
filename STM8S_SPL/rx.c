@@ -94,26 +94,26 @@ int main()
         }
         else if(firedCount == 20) //every 40 ms
         {
-//            if(bindingAddress && fhssOn) {
+            if(bindingAddress && fhssOn) {
 //                putchar('N');
-//                ++currentFhssFreq;
-//                if (currentFhssFreq >= fhssFreqSize)
-//                    currentFhssFreq = 0;
-//                nrfSetFrequency(fhssFreq[currentFhssFreq]);
-//            } else {
+                ++currentFhssFreq;
+                if (currentFhssFreq >= fhssFreqSize)
+                    currentFhssFreq = 0;
+                nrfSetFrequency(fhssFreq[currentFhssFreq]);
+            } //else {
 //                putchar('S');
 //            }
 //            putchar('F');
 //            putchar('\n');
         }
 
-        if (dataReceived/* && nrfIsDataReady()*/) {
+        if (dataReceived) {
 //            resetTim4Counter();
             dataReceived = 0;
-//            firedCount = 0;
-//            fhssOn = 1;
+            firedCount = 0;
+            fhssOn = 1;
             lastRxCounter = timerCounter;
-            printf("%d\n", (int32_t)currentFhssFreq);
+//            printf("%d\n", (int32_t)currentFhssFreq);
             nrfReadData((uint8_t*)data_packet, sizeof(data_packet));
             if (bindingAddress) {
                 // CONSUME DATA
@@ -129,15 +129,15 @@ int main()
             }
 
         }
-//        else if ((timerCounter - lastRxCounter) > 30)
-//        {
-//            fhssOn = 0;
-//            lastRxCounter = timerCounter;
-//            ++currentFhssFreq;
-//            if (currentFhssFreq >= fhssFreqSize)
-//                currentFhssFreq = 0;
-//            nrfSetFrequency(fhssFreq[currentFhssFreq]);
-//        }
+        else if ((timerCounter - lastRxCounter) > 30)
+        {
+            fhssOn = 0;
+            lastRxCounter = timerCounter;
+            ++currentFhssFreq;
+            if (currentFhssFreq >= fhssFreqSize)
+                currentFhssFreq = 0;
+            nrfSetFrequency(fhssFreq[currentFhssFreq]);
+        }
 
 //        if( blinkLED && (blinkCounter >= ledBlinkSpeed) )
 //        {
