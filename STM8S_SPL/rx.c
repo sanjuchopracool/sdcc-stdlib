@@ -86,25 +86,25 @@ int main()
             firedCount++;
             timerCounter++;
 
-        }
 
-        if (firedCount >= 25)
-        {
-            firedCount = 0;
-        }
-        else if(firedCount == 20) //every 40 ms
-        {
-            if(bindingAddress && fhssOn) {
-//                putchar('N');
-                ++currentFhssFreq;
-                if (currentFhssFreq >= fhssFreqSize)
-                    currentFhssFreq = 0;
-                nrfSetFrequency(fhssFreq[currentFhssFreq]);
-            } //else {
-//                putchar('S');
-//            }
-//            putchar('F');
-//            putchar('\n');
+            if(firedCount == freqChangeSpeed)
+            {
+                if(bindingAddress && fhssOn) {
+                    //                putchar('N');
+                    ++currentFhssFreq;
+                    if (currentFhssFreq >= fhssFreqSize)
+                        currentFhssFreq = 0;
+                    nrfSetFrequency(fhssFreq[currentFhssFreq]);
+                } //else {
+                //                putchar('S');
+                //            }
+                //            putchar('F');
+                //            putchar('\n');
+            }
+            else if (firedCount >= fhssTransmitSpeed)
+            {
+                firedCount = 0;
+            }
         }
 
         if (dataReceived) {
@@ -113,7 +113,7 @@ int main()
             firedCount = 0;
             fhssOn = 1;
             lastRxCounter = timerCounter;
-//            printf("%d\n", (int32_t)currentFhssFreq);
+            printf("%d ", (int32_t)currentFhssFreq);
             nrfReadData((uint8_t*)data_packet, sizeof(data_packet));
             if (bindingAddress) {
                 // CONSUME DATA
@@ -129,7 +129,7 @@ int main()
             }
 
         }
-        else if ((timerCounter - lastRxCounter) > 30)
+        else if ((timerCounter - lastRxCounter) > (fhssTransmitSpeed + 5))
         {
             fhssOn = 0;
             lastRxCounter = timerCounter;

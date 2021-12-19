@@ -113,6 +113,7 @@ int main()
     uint8_t fhssFreqSize = sizeof(fhssFreq);
     uint8_t currentFhssFreq = 0;
     printf("FHSS_FREQ_SIZE %d\n", (int32_t)fhssFreqSize);
+    uint8_t fhssOn = 1;
     while( 1 )
     {
         // fired at every 2ms
@@ -120,46 +121,47 @@ int main()
             fired = 0;
             firedCount++;
 //            blinkCounter++;
-        }
-        if(firedCount == 20) // every 40ms
-        {
-            if(bindingAddress) {
-                //printf("%d\n", (int32_t)currentFhssFreq);
-//                putchar('N');
-//                putchar('\n');
-                nrfSetFrequency(fhssFreq[currentFhssFreq++]);
-                if (currentFhssFreq >= fhssFreqSize)
-                    currentFhssFreq = 0;
-            } // else {
-//                putchar('S');
-//                putchar('F');
-//                putchar('\n');
-//            }
-        }
-        else if (firedCount == 25)
-        {
-            if (bindingAddress) {
-                // send normal data
-                putchar('T');
-                putchar('\n');
-                nrfWrite(data, TRANSFER_SIZE);
-            } else {
-                if (packetSent) {
-                    packetSent = 0;
-                    bindingAddress = newBindingAddress;
-                    printf("SETTIING BIND ADDRESS %d\n", (int32_t)bindingAddress);
-                    nrfSetBindingAddress(bindingAddress);
-                    // TODO save in eeprom
-                    blinkLED = 0;
-                    onLED();
-                } else {
-                    // keep sending binding address
-                    data_packet.switches = newBindingAddress;
-                    printf("BINDING %d\n", (int32_t)newBindingAddress);
-                    nrfWrite((uint8_t*)data_packet, sizeof(data_packet));
-                }
+            if(firedCount == freqChangeSpeed)
+            {
+                if(bindingAddress && fhssOn) {
+                    //printf("%d\n", (int32_t)currentFhssFreq);
+    //                putchar('N');
+    //                putchar('\n');
+                    ++currentFhssFreq;
+                    if (currentFhssFreq >= fhssFreqSize)
+                        currentFhssFreq = 0;
+                    nrfSetFrequency(fhssFreq[currentFhssFreq]);
+                } // else {
+    //                putchar('S');
+    //                putchar('F');
+    //                putchar('\n');
+    //            }
             }
-            firedCount = 0;
+            else if (firedCount == fhssTransmitSpeed)
+            {
+                if (bindingAddress) {
+                    // send normal data
+                    putchar('T');
+                    putchar('\n');
+                    nrfWrite(data, TRANSFER_SIZE);
+                } else {
+                    if (packetSent) {
+                        packetSent = 0;
+                        bindingAddress = newBindingAddress;
+                        printf("SETTIING BIND ADDRESS %d\n", (int32_t)bindingAddress);
+                        nrfSetBindingAddress(bindingAddress);
+                        // TODO save in eeprom
+                        blinkLED = 0;
+                        onLED();
+                    } else {
+                        // keep sending binding address
+                        data_packet.switches = newBindingAddress;
+                        printf("BINDING %d\n", (int32_t)newBindingAddress);
+                        nrfWrite((uint8_t*)data_packet, sizeof(data_packet));
+                    }
+                }
+                firedCount = 0;
+            }
         }
 
 //        if (blinkLED && (blinkCounter == 50))
